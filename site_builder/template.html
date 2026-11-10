@@ -157,6 +157,17 @@ html.dark .stp b{color:var(--teal)}
 .ba pre{font-size:12px}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
 @media (max-width:900px){.ba{grid-template-columns:1fr}}
+.hero.report{grid-template-columns:minmax(0,1fr);padding:72px 28px 92px}
+.hero.report .hero-in{justify-self:center;max-width:1144px;width:100%}
+.hero.report h1{font-size:clamp(30px,3.6vw,46px);max-width:900px}
+.byline{color:#dbe4f0;font-size:16px;font-weight:500;margin:0 0 28px}
+.report-body{max-width:760px;margin:0 auto}.report-body.wide{max-width:1144px}
+.report-body h2{font-size:28px;margin:0 0 16px}.report-body h2+p{margin-top:0}
+.report-body p{font-size:16.5px}
+#findings{margin-top:44px}
+.findings{padding-left:22px}.findings li{padding:6px 0;font-size:16px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px}
+.toc-grid .card{padding:22px 24px}.toc-grid .card h3{font-size:18px}
 /* inner pages */
 [id]{scroll-margin-top:84px}
 .phead{background:var(--navy);color:#b6c3d6;padding:48px 28px 44px}
@@ -183,10 +194,9 @@ pre{background:var(--code);color:#e2e8f0;border-radius:12px;padding:18px 20px;ov
 pre code{background:none;border:0;padding:0;color:inherit;font-size:1em}
 .copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#cbd5e1;border-radius:6px;font-size:11px;padding:3px 9px;cursor:pointer;opacity:0;transition:.15s}
 pre:hover .copy{opacity:1}
-.admonition.info{border-color:rgba(20,184,166,.45);background:rgba(20,184,166,.07)}
 .admonition{border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:4px 18px;margin:1.4em 0;font-size:14.5px}
-html.dark .admonition.info{border-color:rgba(20,184,166,.45);background:rgba(20,184,166,.07)}
-.admonition{background:#0f2340;border-color:#1e3a5f}
+html.dark .admonition{background:#0f2340;border-color:#1e3a5f}
+.admonition.info{border-color:rgba(20,184,166,.45);background:rgba(20,184,166,.07)}
 .admonition-title{font-weight:700;color:var(--ink);margin:12px 0 4px!important}
 .takeaways{background:linear-gradient(135deg,rgba(20,184,166,.10),rgba(59,130,246,.08));border:1px solid rgba(20,184,166,.35);border-radius:14px;padding:20px 24px;margin:0 0 2em}
 .takeaways .t{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-d);margin-bottom:6px}
@@ -220,8 +230,8 @@ footer{background:var(--navy);color:#93a4bd;font-size:13.5px}
 </div></header>
 <main>{{BODY}}</main>
 <footer><div class="foot">
-  <div><b>Rare Cyber Advisory Services</b><br>Establishing trust in enterprise AI infrastructure.</div>
-  <div><a href="https://rarecyber.ca">rarecyber.ca</a> · <a href="https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory">GitHub</a><br>© 2026 Rare Cyber Advisory Services</div>
+  <div><b>Securing AI Agents with Privileged Tool Access</b><br>Technical report, version 1.1 · Frank Cenedese, CISSP, CISA</div>
+  <div><a href="limitations.html">Scope and limitations</a> · <a href="https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory">Source on GitHub</a> · Contact: <a href="https://rarecyber.ca">rarecyber.ca</a></div>
 </div></footer>
 <script>
 (function(){

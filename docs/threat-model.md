@@ -9,7 +9,7 @@
 
 ## Why threat model first
 
-Every test in this lab exists because the threat model said it should. That is the chain an auditor or a hiring manager should be able to follow: **threat → control → test → evidence.** If a test can't be traced back to a threat, it's activity, not assurance.
+Every test in this lab exists because the threat model said it should. That is the chain an auditor or reviewer should be able to follow: **threat → control → test → evidence.** If a test can't be traced back to a threat, it's activity, not assurance.
 
 ---
 
@@ -40,7 +40,7 @@ Every test in this lab exists because the threat model said it should. That is t
 | **S1** | Spoofing | Agent connects to an unapproved or look-alike MCP server | High | **I** Approved registry; gateway is the only route to tools | TC-04 | PLANNED |
 | **S2** | Spoofing | Agent token stolen or replayed from another context | High | **R** Short-lived tokens; Conditional Access for agents | TC-04 | PLANNED |
 | **T1** | Tampering | Instructions hidden in content steer the agent (indirect prompt injection) | Critical | **T** Content inspection before the agent acts | TC-02 | TESTED |
-| **T2** | Tampering | A tool's definition or description is changed to mislead the agent (tool poisoning) | High | **I** Hashed, version-controlled definitions | TC-06 | PLANNED |
+| **T2** | Tampering | A tool's definition or description is changed to mislead the agent (tool poisoning) | High | **I** Hashed, version-controlled definitions | TC-06 | TESTED |
 | **R1** | Repudiation | A harmful action can't be traced to a user, agent or policy | High | **A** User, agent and tool correlated in one log | TC-03 | TESTED |
 | **I1** | Information disclosure | Agent exports records beyond what the task needs | Critical | **R** Export tool gated by its own role | TC-07 | PLANNED |
 | **I2** | Information disclosure | Sensitive data leaks into prompts, responses or logs | Medium | DLP and Purview labels; log redaction | Review | OPEN |
@@ -69,7 +69,7 @@ In this lab, STRIDE is the backbone because every security team already knows it
 2. **First pass with tooling:** an AI-assisted tool such as STRIDE GPT, which supports agentic systems, produces a draft list of threats.
 3. **Expert review:** every generated threat is accepted, merged or rejected by a practitioner. The tool speeds up the work; the judgement stays human.
 4. **Trace to tests:** each accepted threat gets a control and a test on both AWS and Microsoft.
-5. **Update on evidence:** when a test runs, its status and the risk rating are updated here and on the [Evidence](evidence/index.md) page.
+5. **Update on evidence:** when a test runs, its status and the risk rating are updated here and on the [Results](evidence/index.md) page.
 
 Every test is automated in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), so any result on this site can be re-run and reproduced.
 
@@ -86,7 +86,3 @@ Every test is automated in the [lab test harness](https://github.com/frankcenede
 | **TC-08** Confused deputy | E2 | Have the agent act for a user who lacks write rights, and confirm the gateway refuses |
 
 Full methods for every test, on both platforms, are in the [Testing Guide](advisory/testing-guide.md#5-validation-test-plan).
-
----
-
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*

@@ -1,12 +1,10 @@
-# Executive Brief: Your AI Agents Are Becoming Privileged Users
+# Appendix: Executive Summary for Decision-Makers
 
-**Prepared for:** Security, technology and risk leaders  
-**Author:** Rare Cyber Advisory Services  
+**For:** Security, technology and risk leaders  
+**Author:** Frank Cenedese, CISSP, CISA  
 **Reading time:** 5 minutes
 
-!!! info "Two ways to read this brief"
-    **If you lead security or technology,** this is written for you: the risk, the questions to ask, and the decisions to make.
-    **If you're hiring an advisor,** this is a sample of how I brief executives: plain language, real cases, and a clear ask.
+This appendix restates the report's findings for a non-technical audience: why AI agents are a privileged access problem, what it could mean for an organization, and the decisions it raises.
 
 ---
 
@@ -49,7 +47,7 @@ Meanwhile the platforms are making agents easier to build: Copilot Studio, Micro
 4. **Is content from outside** (email, documents, tickets, web pages) inspected before an agent acts on it?
 5. **If an agent did something harmful tomorrow,** could we name the person, the agent and the policy that allowed it, within a day?
 
-If the answer to any of these is "no" or "not sure," you have the same exposure the lab baseline had.
+If the answer to any of these is "no" or "not sure," the organization likely has the same exposure the lab baseline had.
 
 ---
 
@@ -85,8 +83,4 @@ The TRIAD baseline describes five outcomes, not products:
 | Untrusted content inspection | SI-10 | MEASURE 2.7 | 8.3 AI risk treatment |
 | Attributable audit trail | AU-2, AU-12 | MEASURE 2.8 | 9.1 Monitoring and measurement |
 
-The technical design behind these outcomes is in the [Testing Guide](testing-guide.md), and the lab results are on the [Evidence](../evidence/index.md) page.
-
----
-
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*
+The technical design behind these outcomes is in the [Testing Guide](testing-guide.md), and the lab results are on the [Results](../evidence/index.md) page.

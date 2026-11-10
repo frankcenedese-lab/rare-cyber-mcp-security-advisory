@@ -1,6 +1,21 @@
-# Evidence Baseline
+# Results and Evidence
 
-Assessment output from the TRIAD baseline, before and after hardening. Each finding maps to a NIST SP 800-53 control and to a validation test in the [Testing Guide](../advisory/testing-guide.md#5-validation-test-plan).
+Results from the lab, reported only for tests that have been run. Baseline and hardened findings come first, then the run log for the test harness. Each finding maps to a NIST SP 800-53 control and to a validation test in the [Testing Guide](../advisory/testing-guide.md#5-validation-test-plan).
+
+## Test run log
+
+| Test | Threat | AWS | Microsoft | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-01 Out-of-scope tool call | E1 | PASS | PLANNED | Baseline and hardened assessment, AWS lab |
+| TC-02 Indirect prompt injection | T1 | PASS | PLANNED | Baseline and hardened assessment, AWS lab |
+| TC-03 Identity correlation | R1 | PASS | PLANNED | Baseline and hardened assessment, AWS lab |
+| TC-04 Spoofing | S1, S2 | PLANNED | PLANNED | Defined in v1.1 |
+| TC-05 Denial of service | D1 | PLANNED | PLANNED | Defined in v1.1 |
+| TC-06 Tool poisoning | T2 | PASS | PASS | Platform independent: hash check run in the repository harness and CI, 2026-11-10 |
+| TC-07 Data export | I1 | PLANNED | PLANNED | Defined in v1.1 |
+| TC-08 Confused deputy | E2 | PLANNED | PLANNED | Defined in v1.1 |
+
+Harness output for each run is committed under `docs/evidence/runs/` and listed here with its date.
 
 !!! note "About this evidence"
     The baseline files below are from the lab environment; account identifiers are placeholders. New results come from the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab) and are added to the run log as each test is run.
@@ -23,7 +38,7 @@ Runs are never edited. A re-test is a new run.
 
 ## Before hardening
 
-**Environment:** AWS baseline, unhardened · **Status:** :material-close-circle:{ style="color: #c62828" } NON-COMPLIANT · **Risk score:** CRITICAL (8.9/10)
+**Environment:** AWS baseline, unhardened · **Status:** :material-close-circle:{ style="color: #c62828" } NON-COMPLIANT
 
 | ID | Pillar | Severity | Finding | NIST control |
 | :--- | :--- | :--- | :--- | :--- |
@@ -37,7 +52,7 @@ Runs are never edited. A re-test is a new run.
 
 ## After hardening
 
-**Environment:** AWS + Microsoft, TRIAD hardened · **Status:** :material-check-circle:{ style="color: #2e7d32" } COMPLIANT · **Risk score:** LOW (0.2/10)
+**Environment:** AWS + Microsoft, TRIAD hardened · **Status:** :material-check-circle:{ style="color: #2e7d32" } COMPLIANT
 
 | ID | Pillar | Status | Control in place | NIST control |
 | :--- | :--- | :--- | :--- | :--- |

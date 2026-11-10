@@ -310,7 +310,3 @@ Configuration drifts back unless a policy requires it. These are the policies ea
 | **Capacity and availability** | Rate limits and spend alerts set per agent | C5 | A.8.6 | — |
 | **Data classification and DLP** | Content reaching agents is inspected; exports limited to approved data classes | C1, C4 | A.5.12, A.8.12 | — |
 | **Incident response plan** | New playbook for a compromised agent: revoke its identity, disable the tool, preserve logs | C2, C3 | A.5.24, A.5.26 | — |
-
----
-
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*

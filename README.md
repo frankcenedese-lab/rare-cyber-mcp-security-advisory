@@ -1,4 +1,6 @@
-# Rare Cyber AI Security Lab: Securing AI Agents on AWS and Microsoft
+# Securing AI Agents with Privileged Tool Access
+
+A threat-modelled lab on AWS and Microsoft. Technical report by Frank Cenedese, CISSP, CISA.
 
 [![Governance Standard: TRIAD v1.0](https://img.shields.io/badge/Governance-TRIAD%20v1.0-blue.svg)](#the-triad-framework)
 [![Compliance Alignment: NIST / ISO / OWASP](https://img.shields.io/badge/Compliance-NIST%20%7C%20ISO%2042001%20%7C%20OWASP-green.svg)](#standards--compliance-mapping)[![Cloud Focus: Multi-Cloud AWS & Azure](https://img.shields.io/badge/Multi--Cloud-AWS%20%26%20Microsoft-orange.svg)](#multi-cloud-architecture)
@@ -7,18 +9,26 @@
 
 ## Overview
 
-As enterprise adoption of Agentic AI and the **Model Context Protocol (MCP)** rapidly accelerates, default unhardened deployments expose organizations to critical risk vectors—most notably **Identity Flattening** (where all tools share a single elevated service credential) and **Indirect Prompt Injection** (where unvalidated tool outputs hijack model execution).
-
-This repository serves as the official advisory baseline and proof-of-concept repository for **Rare Cyber Advisory Services**, establishing the **TRIAD Framework** for enterprise MCP hardening.
+AI agents connected to business systems through the Model Context Protocol (MCP) commonly run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person. This repository contains a lab-based technical report on those risks: a STRIDE threat model, the TRIAD controls applied on AWS with Microsoft equivalents, configuration and policy changes before and after, an automated test harness, and the results to date, with limitations stated.
 
 ---
 
-## 🌐 Visit the Site
+## 🌐 Read the Report
 
 **[frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory](https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/)**
 
-| Page | What it shows |
+| Section | Source |
 | :--- | :--- |
+| Abstract and key findings | [site home](https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/) |
+| 1. Method and Environment | [docs/case-study.md](docs/case-study.md) |
+| 2. Threat Model (STRIDE) | [docs/threat-model.md](docs/threat-model.md) |
+| 3. Configuration and Policy Changes | [docs/configuration.md](docs/configuration.md) |
+| 4. Testing Guide | [docs/advisory/testing-guide.md](docs/advisory/testing-guide.md) |
+| 5. Results and Evidence | [docs/evidence/index.md](docs/evidence/index.md) |
+| 6. Scope, Limitations and Change Log | [docs/limitations.md](docs/limitations.md) |
+| Appendix: Executive Summary | [docs/advisory/executive-brief.md](docs/advisory/executive-brief.md) |
+
+--- | :--- |
 | [The Build](docs/case-study.md) | The case study: build, threat model, break, fix, prove |
 | [Threat Model](docs/threat-model.md) | STRIDE analysis of the lab: ten threats, five trust boundaries |
 | [Configuration](docs/configuration.md) | Every configuration and policy change, before and after |
@@ -69,4 +79,3 @@ python -m http.server -d _site 8000
 
 ---
 
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*

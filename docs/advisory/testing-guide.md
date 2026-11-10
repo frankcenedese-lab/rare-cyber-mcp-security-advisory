@@ -1,7 +1,6 @@
 # Testing Guide: Validating TRIAD on AWS and Microsoft
 
-**Author:** Rare Cyber Advisory Services  
-**For:** Security architects, cloud engineers and assessors  
+**Author:** Frank Cenedese, CISSP, CISA  
 **Environments:** AWS lab build · Microsoft Entra ID and Azure API Management  
 **Last reviewed:** November 2026
 
@@ -177,7 +176,7 @@ python lab/triad_tests.py --platform aws --only TC-01 TC-07
 
 ---
 
-## 6. Licensing and Limitations to Confirm with the Client
+## 6. Licensing and Platform Notes
 
 * **Entra Agent ID** is available to all Entra customers. Extending Entra security features to agents requires **Microsoft Agent 365**, which is included in Microsoft 365 E7 and sold as an add-on to E5, A5 and Business Premium.
 * **Conditional Access for agents** needs Entra ID P1; **ID Protection for agents** needs P2.
@@ -198,7 +197,3 @@ python lab/triad_tests.py --platform aws --only TC-01 TC-07
 * [Audit logs for Copilot and AI activities](https://learn.microsoft.com/en-us/purview/audit-copilot)
 * [Microsoft Copilot data connector for Sentinel (preview)](https://techcommunity.microsoft.com/t5/microsoft-sentinel-blog/the-microsoft-copilot-data-connector-for-microsoft-sentinel-is/ba-p/4491986)
 * [Copilot Studio logging gaps (Datadog Security Labs)](https://securitylabs.datadoghq.com/articles/copilot-studio-logging-gaps/)
-
----
-
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*

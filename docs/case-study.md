@@ -1,9 +1,8 @@
-# The Build: Breaking and Hardening an AI Agent Environment
+# Method and Environment: Building and Hardening the AI Agent Lab
 
-**Type:** Hands-on case study  
 **Platforms:** AWS lab build · Microsoft control mapping  
 **Frameworks:** NIST SP 800-53 · NIST AI RMF · ISO/IEC 42001 · OWASP  
-**Built by:** Frank Cenedese, Rare Cyber
+**Author:** Frank Cenedese, CISSP, CISA
 
 ---
 
@@ -14,7 +13,7 @@
 | **The question** | When an AI agent is wired into business systems through the Model Context Protocol (MCP), what can it actually do, and can anyone prove it afterwards? |
 | **What I built** | A working MCP environment on AWS with an AI agent, an API gateway and tool functions ranging from read-only lookups to financial writes. |
 | **What I did to it** | Deployed it the way most teams do by default, attacked it, hardened it with a control framework I designed (TRIAD), then attacked it again. |
-| **What came out** | Before and after assessment evidence, a control mapping to Microsoft's stack, and an executive brief, all published on this site. |
+| **What came out** | A threat model, before and after configuration and policy changes, an automated test harness and assessment evidence, all published in this report. |
 
 ---
 
@@ -50,7 +49,7 @@ I ran three tests against the baseline. Each one maps to a control in the framew
 | **Indirect prompt injection** | Planted instructions inside content the agent would read, telling it to use a write tool | Followed: nothing inspected the content |
 | **Accountability** | Tried to trace a tool call back to the human user who started the session | Failed: logs showed an API call, not a person or a tool |
 
-The assessment scored the baseline **CRITICAL (8.9/10)** with three failed controls: AC-6 Least Privilege, SI-10 Input Validation and AU-12 Audit Generation.
+The baseline failed three controls: AC-6 Least Privilege, SI-10 Input Validation and AU-12 Audit Generation.
 
 ---
 
@@ -76,25 +75,10 @@ After hardening, the same three tests were run again.
 | Input validation (SI-10) | FAIL | PASS |
 | Audit generation (AU-12) | FAIL | PASS |
 
-The out-of-scope call was refused at the gateway with a `403`, the injected content was flagged before it reached the agent, and each event was logged with the user, agent and tool together. The full assessment output is on the [Evidence](evidence/index.md) page.
+The out-of-scope call was refused at the gateway with a `403`, the injected content was flagged before it reached the agent, and each event was logged with the user, agent and tool together. The full assessment output is on the [Results](evidence/index.md) page. Threats not covered by these three tests are listed in the [Threat Model](threat-model.md), and the report's limits are set out in [Scope and Limitations](limitations.md).
 
 ---
 
 ## 6. Taking it to Microsoft
 
 Most enterprise AI agents will run on Microsoft: Copilot Studio, Foundry and Microsoft 365 Copilot. I mapped every control to its Microsoft equivalent: Entra Agent ID for agent identity, Azure API Management for scope enforcement, Prompt Shields for injection defence, and Sentinel and Purview for audit. The [Testing Guide](advisory/testing-guide.md) shows how each test runs on both clouds and includes a reference gateway policy, a detection query and the validation test plan.
-
----
-
-## 7. What this work demonstrates
-
-| For a GRC or advisory role | For an organization adopting AI agents |
-| :--- | :--- |
-| Designing controls and mapping them to NIST SP 800-53, the NIST AI RMF and ISO/IEC 42001 | A clear picture of what your agents can reach today |
-| Producing evidence an auditor will accept, before and after remediation | Controls that work on the cloud you already run |
-| Hands-on identity and access architecture across AWS and Microsoft | Evidence your board, auditors and insurer can rely on |
-| Writing for both engineers and executives | A roadmap your team can actually implement |
-
----
-
-*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*

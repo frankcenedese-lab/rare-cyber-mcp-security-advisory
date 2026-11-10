@@ -26,24 +26,25 @@ SITE = "Rare Cyber AI Security Lab"
 
 # (output file, nav label, source markdown, audience tag)
 PAGES = [
-    ("the-build.html", "The Build", "case-study.md", ""),
-    ("threat-model.html", "Threat Model", "threat-model.md", "STRIDE · agentic AI"),
-    ("configuration.html", "Configuration", "configuration.md", "Before & after"),
-    ("testing-guide.html", "Testing Guide", "advisory/testing-guide.md", "AWS + Microsoft"),
-    ("evidence.html", "Evidence", "evidence/index.md", "For auditors & assessors"),
-    ("executive-brief.html", "Executive Brief", "advisory/executive-brief.md", "For leaders & hiring teams"),
+    ("method.html", "Method", "case-study.md", "Section 1"),
+    ("threat-model.html", "Threat Model", "threat-model.md", "Section 2"),
+    ("configuration.html", "Configuration", "configuration.md", "Section 3"),
+    ("testing-guide.html", "Testing", "advisory/testing-guide.md", "Section 4"),
+    ("results.html", "Results", "evidence/index.md", "Section 5"),
+    ("limitations.html", "Limitations", "limitations.md", "Section 6"),
+    ("executive-summary.html", "Executive Summary", "advisory/executive-brief.md", "Appendix"),
 ]
 SOURCE_TO_PAGE = {"index.md": "index.html", **{src: out for out, _, src, _ in PAGES}}
 
 TAKEAWAYS = {
     "case-study.md": [
-        "I built an AI agent environment, attacked it, hardened it with TRIAD and re-tested it.",
+        "An MCP agent environment was built with default settings, assessed, hardened with TRIAD and re-assessed.",
         "Three controls failed on the default build; all three passed after hardening.",
         "Every control maps to NIST SP 800-53 and has an AWS and a Microsoft implementation.",
     ],
     "threat-model.md": [
         "Ten threats identified across five trust boundaries using STRIDE.",
-        "Three are tested, six have planned tests in the automated harness, and one is open for review.",
+        "Four are tested, five have defined tests not yet run, and one is open for review.",
         "STRIDE is the backbone; CSA MAESTRO and the OWASP Agentic Top 10 catch what it misses.",
     ],
     "configuration.md": [
@@ -125,7 +126,7 @@ def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str
                       body, flags=re.S)
     if src in TAKEAWAYS:
         items = "".join(f"<li>{x}</li>" for x in TAKEAWAYS[src])
-        body = f'<div class="takeaways"><div class="t">Key takeaways</div><ul>{items}</ul></div>' + body
+        body = f'<div class="takeaways"><div class="t">Summary</div><ul>{items}</ul></div>' + body
 
     tokens = md.toc_tokens[0]["children"] if md.toc_tokens and md.toc_tokens[0]["level"] == 1 else md.toc_tokens
     toc = "".join(f'<li><a href="#{t["id"]}">{re.sub(r"^[TRIAD]: ", "", t["name"])}</a></li>' for t in tokens)
@@ -156,8 +157,8 @@ def main() -> None:
         (OUT / name).write_text(doc)
 
     home = (HERE / "home.html").read_text().replace("{{ATTACK}}", svg("dg-attack.svg", "hm-"))
-    write("index.html", home, f"{SITE} · Frank Cenedese",
-          "Hands-on AI agent security: an MCP environment built, threat modelled, attacked, hardened and proven on AWS and Microsoft.")
+    write("index.html", home, "Securing AI Agents with Privileged Tool Access · Technical Report",
+          "A threat-modelled lab on AWS and Microsoft: STRIDE analysis, configuration and policy changes, test cases and evidence for AI agents using MCP.")
     for out, label, src, tag in PAGES:
         body, title, desc = render_page(out, label, src, tag)
         write(out, body, f"{label} · {SITE}", desc)
