@@ -18,6 +18,31 @@ This technical advisory provides an enterprise-wide baseline to decouple tool pe
 
 ## Key Risk Vectors (Un-Hardened MCP Baseline)
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Attacker
+    participant Agent as AI Agent / Copilot
+    participant Gateway as Azure APIM / AWS Gateway
+    participant Identity as Entra Workload Identity
+    participant MCP as MCP Tool Server
+
+    Note over Attacker, MCP: SCENARIO 1: Unhardened (Identity Flattening)
+    Attacker->>Agent: Indirect Prompt Injection (Poisoned Input)
+    Agent->>MCP: Execute High-Privilege Write Action
+    MCP-->>Attacker: Data Exfiltrated / Action Executed (SHARED CREDENTIAL BREACH)
+
+    Note over Attacker, MCP: SCENARIO 2: Rare Cyber TRIAD Hardened State
+    Attacker->>Agent: Indirect Prompt Injection (Poisoned Input)
+    Agent->>Gateway: Request Tool Call Execution
+    Gateway->>Identity: Validate Specific JWT Scope (MCPTool.FinancialWrite)
+    alt Missing Required Scope
+        Gateway-->>Agent: 403 Forbidden (Scope Missing)
+        Agent-->>Attacker: Attack Blocked & Event Logged to Sentinel
+    else Valid Scope & Schema Sanitized
+        Gateway->>MCP: Proxy Authorized Request
+    end
+
 1. **Identity Flattening & Over-Privileged Tool Access:** Single shared IAM roles or service principals allow low-risk tools to be leveraged for administrative manipulation.
 2. **Indirect Prompt Injection & Tool Hijacking:** Unsanitized external inputs (emails, tickets, docs) trick the LLM into invoking unapproved tool calls.
 3. **Audit Blind Spots:** Generic HTTP logs fail to correlate human user context (`UserPrincipalName`) with agentic tool execution parameters, creating compliance failures.
