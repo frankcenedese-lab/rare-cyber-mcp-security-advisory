@@ -1,0 +1,87 @@
+<svg class="dg" viewBox="0 0 1040 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Identity flattening compared with decoupled, tool-scoped workload identities">
+<defs>
+  <marker id="dr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#dc2626"/></marker>
+  <marker id="dg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#059669"/></marker>
+  <marker id="dk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#64748b"/></marker>
+</defs>
+
+<!-- PANEL A -->
+<rect class="panel" x="10" y="10" width="1020" height="210" rx="14"/>
+<circle cx="34" cy="38" r="5" fill="#dc2626"/><text class="hd" x="46" y="42">UNHARDENED · IDENTITY FLATTENING</text>
+
+<rect class="box" x="30" y="98" width="150" height="56" rx="9"/>
+<text class="t1" x="105" y="122" text-anchor="middle">User + agent</text><text class="t2" x="105" y="139" text-anchor="middle">any request</text>
+
+<rect class="box bad" x="260" y="86" width="260" height="80" rx="9"/>
+<text class="t1" x="390" y="114" text-anchor="middle">Global MCP service principal</text>
+<text class="t2 r" x="390" y="132" text-anchor="middle">one identity · full admin · every tool</text>
+<text class="t2" x="390" y="150" text-anchor="middle">static key in tool configuration</text>
+
+<rect class="box" x="700" y="62" width="210" height="34" rx="7"/><text class="t1" x="805" y="84" text-anchor="middle">Customer database</text>
+<rect class="box" x="700" y="109" width="210" height="34" rx="7"/><text class="t1" x="805" y="131" text-anchor="middle">General ledger</text>
+<rect class="box" x="700" y="156" width="210" height="34" rx="7"/><text class="t1" x="805" y="178" text-anchor="middle">Export storage</text>
+
+<path class="fl kk" d="M180 126 H256" marker-end="url(#dk)"/>
+<path class="fl red" d="M520 110 C 600 110, 620 79, 696 79" marker-end="url(#dr)"/>
+<path class="fl red" d="M520 126 H696" marker-end="url(#dr)"/>
+<path class="fl red" d="M520 142 C 600 142, 620 173, 696 173" marker-end="url(#dr)"/>
+<text class="sl r" x="608" y="70" text-anchor="middle">read · write · delete</text>
+<text class="t2" x="928" y="131">A tricked agent</text>
+<text class="t2" x="928" y="146">reaches all three</text>
+
+<!-- PANEL B -->
+<rect class="panel" x="10" y="240" width="1020" height="390" rx="14"/>
+<circle cx="34" cy="268" r="5" fill="#059669"/><text class="hd" x="46" y="272">HARDENED · DECOUPLED, TOOL-SCOPED IDENTITY</text>
+
+<rect class="box" x="30" y="404" width="150" height="56" rx="9"/>
+<text class="t1" x="105" y="428" text-anchor="middle">User + agent</text><text class="t2" x="105" y="445" text-anchor="middle">delegated token</text>
+
+<rect class="box good" x="220" y="392" width="160" height="80" rx="9"/>
+<text class="t1" x="300" y="420" text-anchor="middle">API Gateway</text>
+<text class="t2" x="300" y="438" text-anchor="middle">APIM · API Gateway</text>
+<text class="t2" x="300" y="454" text-anchor="middle">checks role per tool</text>
+<path class="fl kk" d="M180 432 H216" marker-end="url(#dk)"/>
+
+<text class="zl" x="430" y="300">ROLE IN THE TOKEN</text>
+<text class="zl" x="640" y="300">WORKLOAD IDENTITY</text>
+<text class="zl" x="850" y="300">ONE PERMISSION</text>
+
+<!-- rows -->
+<g>
+  <path class="fl green" d="M380 410 C 405 410, 405 330, 426 330" marker-end="url(#dg)"/>
+  <rect class="chip" x="430" y="316" width="180" height="28" rx="6"/><text class="t3" x="442" y="334">MCPTool.CustomerRead</text>
+  <path class="fl green" d="M610 330 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="314" width="170" height="32" rx="7"/><text class="t1" x="725" y="335" text-anchor="middle">customer-reader</text>
+  <path class="fl green" d="M810 330 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="314" width="160" height="32" rx="7"/><text class="t2" x="930" y="334" text-anchor="middle">Customer DB · read</text>
+</g>
+<g>
+  <path class="fl green" d="M380 425 C 405 425, 405 390, 426 390" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="376" width="180" height="28" rx="6"/><text class="t3" x="442" y="394">MCPTool.FinancialWrite</text>
+  <path class="fl green" d="M610 390 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="374" width="170" height="32" rx="7"/><text class="t1" x="725" y="395" text-anchor="middle">journal-writer</text>
+  <path class="fl green" d="M810 390 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="374" width="160" height="32" rx="7"/><text class="t2" x="930" y="394" text-anchor="middle">Ledger · post ≤ limit</text>
+</g>
+<g>
+  <path class="fl green" d="M380 440 C 405 440, 405 450, 426 450" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="436" width="180" height="28" rx="6"/><text class="t3" x="442" y="454">MCPTool.FinancialApprove</text>
+  <path class="fl green" d="M610 450 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="434" width="170" height="32" rx="7"/><text class="t1" x="725" y="455" text-anchor="middle">journal-approver</text>
+  <path class="fl green" d="M810 450 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="434" width="160" height="32" rx="7"/><text class="t2" x="930" y="454" text-anchor="middle">Ledger · approve</text>
+</g>
+<g>
+  <path class="fl green" d="M380 455 C 405 455, 405 510, 426 510" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="496" width="180" height="28" rx="6"/><text class="t3" x="442" y="514">MCPTool.ExportWrite</text>
+  <path class="fl green" d="M610 510 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="494" width="170" height="32" rx="7"/><text class="t1" x="725" y="515" text-anchor="middle">export-writer</text>
+  <path class="fl green" d="M810 510 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="494" width="160" height="32" rx="7"/><text class="t2" x="930" y="514" text-anchor="middle">Export · one segment</text>
+</g>
+
+<!-- SoD bracket -->
+<path class="sod" d="M1012 378 h8 v84 h-8"/>
+<text class="sl" x="430" y="562">Separation of duties: journal-writer and journal-approver are separate identities,</text><text class="sl" x="430" y="578">and no agent may hold both roles (TC-11).</text>
+<text class="lg" x="30" y="600">Each identity is short-lived, issued through workload identity federation, and can reach only its own resource and action.</text>
+</svg>

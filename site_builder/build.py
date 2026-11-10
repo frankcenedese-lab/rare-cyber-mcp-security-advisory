@@ -69,6 +69,7 @@ FIGURES = {
     "attack": ("dg-attack.svg", "The same indirect prompt injection against an unhardened and a TRIAD hardened deployment."),
     "stride": ("dg-stride.svg", "Lab architecture with each STRIDE threat placed where it crosses a trust boundary."),
     "idflow": ("dg-idflow.svg", "Identity flow for one tool call: the token at each hop, its audience and claims, and the blocked passthrough."),
+    "decouple": ("dg-decouple.svg", "Identity flattening compared with decoupled, tool-scoped workload identities, using the lab's four tools."),
     "maturity": ("dg-maturity.svg", "Agent identity maturity model, with the lab's current level."),
 }
 

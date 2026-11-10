@@ -39,6 +39,6 @@ All testing described in this report was performed in environments owned and con
 
 | Version | Date | Changes |
 | :--- | :--- | :--- |
-| 1.2 | 2026-11-10 | Added the Identity Architecture section: four identities, token flow with audience binding and no passthrough, a five-level agent identity maturity model, and tests TC-09 to TC-13. Threat model extended to fifteen threats. Separation of duties check (TC-11) added to the harness and CI. |
+| 1.2 | 2026-11-10 | Added the Identity Architecture section: identity flattening vs decoupled identity, mandatory identity standards (tool-scoped identities, ephemeral credentials with 60 and 15 minute token limits, delegation, audience binding), a multi-cloud implementation mapping, four identities, token flow with audience binding and no passthrough, a five-level agent identity maturity model, and tests TC-09 to TC-13. Threat model extended to fifteen threats. Separation of duties check (TC-11) added to the harness and CI. |
 | 1.1 | 2026-11-10 | Restructured as a technical report. Added the STRIDE threat model (ten threats, five trust boundaries), configuration and policy changes before and after, the automated test harness, tests TC-04 to TC-08, the evidence standard, and this section. Executive brief moved to an appendix. |
 | 1.0 | 2026-11-10 | Initial advisory: TRIAD framework, AWS lab baseline and hardened results, Microsoft control mapping. |

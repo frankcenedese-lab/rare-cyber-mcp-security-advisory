@@ -15,6 +15,28 @@ This section separates the identities involved, defines a maturity model for con
 
 ---
 
+## Identity flattening vs decoupled identity
+
+Default MCP deployments often run every tool under one highly privileged service identity. If a single tool is steered through indirect prompt injection, the attacker inherits that identity's global privileges. The fix is to decouple identity: scope it to each tool, verify it on every call, and keep it short-lived.
+
+<div class="figure-slot" data-figure="decouple"></div>
+
+---
+
+## Mandatory identity standards
+
+These are the minimum controls for any agent allowed to reach production systems.
+
+**A. Tool-scoped workload identities.** Each tool function runs under its own identity with one permission set: an IAM role per tool on AWS, a managed identity or app registration per tool on Microsoft. A read-only tool must have no authorization path to write or delete. Conflicting duties, such as posting and approving, must never share an identity.
+
+**B. Ephemeral credential brokering.** No static API keys or long-lived tokens in tool configuration. Credentials are issued at runtime through workload identity federation or managed identities, with access tokens limited to **60 minutes**, and **15 minutes or less** for high-risk tools. On Microsoft, Entra access tokens default to a longer, variable lifetime, so meeting this standard needs a token lifetime policy or continuous access evaluation.
+
+**C. User-to-agent delegation.** Human-initiated requests use delegation (OAuth on-behalf-of or token exchange), never token passthrough. The agent can't call any tool or reach any resource the initiating user isn't authorized for. Authorization keys on the user's immutable object ID (`oid` in Entra, principal ID in AWS); the UserPrincipalName is logged for readability but never used to decide access, because it can change.
+
+**D. Audience binding.** Every token is issued for one MCP server or API and rejected anywhere else, as the MCP authorization specification requires.
+
+---
+
 ## Four identities, not one
 
 | Identity | What it is | What it must never do |
@@ -33,6 +55,20 @@ The MCP authorization specification makes the third row a requirement: MCP serve
 <div class="figure-slot" data-figure="idflow"></div>
 
 Each hop gets a new token, bound to the next audience. The agent's token names both the user (`sub`) and the agent (`act`), so the gateway can cap the agent at the user's rights. The MCP server never forwards that token; it obtains its own for the downstream API.
+
+---
+
+## Multi-cloud implementation mapping
+
+| Security layer | AWS | Microsoft |
+| :--- | :--- | :--- |
+| **Gateway authentication** | Amazon API Gateway with IAM (SigV4) authorization | Azure API Management with `validate-azure-ad-token` |
+| **Agent identity** | IAM role for the agent runtime, with required owner tags | Entra Agent ID, with owner and sponsor |
+| **Tool identity** | One IAM execution role per Lambda function or container | App registration per tool: app roles for app-only calls, scopes for delegated calls |
+| **Delegated access** | `AssumeRoleWithWebIdentity` for federation, with the user carried as source identity or session tags | Entra on-behalf-of flow |
+| **Token audience** | Resource indicator on the token request; audience checked at the gateway and server | `aud` validated by APIM and the MCP server |
+| **Access conditions** | IAM condition keys (source network, MFA, session duration) | Conditional Access for agents and workload identities |
+| **Data boundary** | IAM resource-based policies and AWS KMS key policies | Purview sensitivity labels and DLP; Key Vault with customer-managed keys |
 
 ---
 
