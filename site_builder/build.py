@@ -39,19 +39,19 @@ SOURCE_TO_PAGE = {"index.md": "index.html", **{src: out for out, _, src, _ in PA
 
 TAKEAWAYS = {
     "case-study.md": [
-        "An MCP agent environment was built with default settings, assessed, hardened with TRIAD and re-assessed.",
+        "An MCP agent environment with four tools was built with default settings, assessed, hardened with TRIAD and re-assessed.",
         "Three controls failed on the default build; all three passed after hardening.",
-        "Every control maps to NIST SP 800-53 and has an AWS and a Microsoft implementation.",
+        "Hardening recorded the user on every call (attribution); capping the agent at the user's rights is level 3, not yet implemented.",
     ],
     "threat-model.md": [
-        "Fifteen threats identified across five trust boundaries using STRIDE, five of them from the identity analysis.",
-        "Five are tested, nine have defined tests not yet run, and one is open for review.",
+        "Sixteen threats identified across five trust boundaries using STRIDE, checked against MAESTRO and the OWASP Agentic Top 10.",
+        "Three are tested in the lab, two verified in the repository, nine have defined tests not yet run, and two are open.",
         "STRIDE is the backbone; CSA MAESTRO and the OWASP Agentic Top 10 catch what it misses.",
     ],
     "identity-architecture.md": [
         "Four identities are involved in every tool call: user, agent, MCP server and downstream API.",
         "Each hop gets a new token bound to one audience; the agent's token is never forwarded.",
-        "The lab is at level 2 of a five-level maturity model; levels 3 to 5 are designed with tests TC-08 to TC-13.",
+        "The lab is at level 2 of a five-level maturity model, with user attribution; levels 3 to 5 are designed with tests TC-08 to TC-13.",
     ],
     "configuration.md": [
         "Six configuration changes produced the TRIAD results, each shown before and after on AWS and Microsoft.",
@@ -60,8 +60,8 @@ TAKEAWAYS = {
     ],
     "advisory/testing-guide.md": [
         "Thirteen tests run on AWS and Microsoft, with the same pass conditions.",
-        "Enforce each tool's role at the gateway before the call reaches the MCP server.",
-        "Every test is automated in the lab harness and writes hashed, timestamped evidence.",
+        "Each tool's role is enforced per call, with default deny: in APIM on Microsoft, in the MCP server on AWS.",
+        "Every test is defined in the lab harness, which writes hashed, timestamped evidence.",
     ],
 }
 

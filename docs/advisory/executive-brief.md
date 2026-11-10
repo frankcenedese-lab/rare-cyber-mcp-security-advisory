@@ -25,7 +25,7 @@ This is no longer theoretical. Two public cases from 2025 show both halves of th
 * **An agent turned against its own user.** Researchers showed that a malicious issue posted in a public GitHub repository could hijack a developer's AI agent and make it leak data from the developer's private repositories. The agent was using a broad access token that could reach everything the user could. ([Invariant Labs](https://invariantlabs.ai/blog/mcp-github-vulnerability))
 * **A vendor's AI connector leaked across customers.** A logic flaw in Asana's MCP server exposed some customers' data to users at other organizations for over a month, affecting roughly 1,000 customers. ([BleepingComputer](https://www.bleepingcomputer.com/news/security/asana-warns-mcp-ai-feature-exposed-customer-data-to-other-orgs/))
 
-Meanwhile the platforms are making agents easier to build: Copilot Studio, Microsoft Foundry and Amazon Bedrock all let business teams connect agents to systems with little or no security review.
+Meanwhile, platforms such as Copilot Studio, Microsoft Foundry and Amazon Bedrock make it easy for business teams to connect agents to systems, and security review often lags behind.
 
 ---
 
@@ -55,7 +55,7 @@ If the answer to any of these is "no" or "not sure," the organization likely has
 
 <div class="figure-slot" data-figure="attack"></div>
 
-The TRIAD baseline describes five outcomes, not products:
+The TRIAD framework describes five outcomes, not products:
 
 | Outcome | In plain terms |
 | :--- | :--- |
@@ -64,6 +64,12 @@ The TRIAD baseline describes five outcomes, not products:
 | **Tool definitions can't change silently** | What was approved is what runs |
 | **Every action is attributable** | Each tool call is logged with the user, the agent and what it did |
 | **The same standard applies on every platform** | AWS, Microsoft or both: one policy, one set of tests, one evidence standard |
+
+---
+
+## How mature is your agent identity?
+
+The report places agent identity on five levels. Most organizations start at **level 1**, where every tool shares one credential. The lab reached **level 2**: each tool has its own identity and every action is recorded against a person. The levels that matter most for accountability come next: the agent can never do more than the person it acts for (level 3); high-risk actions need time-limited approval and can't be combined, such as posting and approving a payment (level 4); and every agent has an owner, regular access reviews and a measured cut-off time (level 5).
 
 ---
 

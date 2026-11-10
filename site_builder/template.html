@@ -178,6 +178,10 @@ html.dark .stp b{color:var(--teal)}
 .dg .sod{fill:none;stroke:#0f8f82;stroke-width:1.6}
 .dg .base{stroke:#94a3b8;stroke-width:1.2}
 .dg .mk text{font-size:10.5px;font-weight:700;letter-spacing:.1em;fill:#0f8f82}
+.ftag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;vertical-align:1px;margin-right:4px}
+.ftag.t{background:#d1fae5;color:#065f46}.ftag.a{background:#e0f2fe;color:#075985}
+.fnote{font-size:14px!important;color:var(--muted)}
+.pill.verified{background:#e0f2fe;color:#075985}
 /* inner pages */
 [id]{scroll-margin-top:84px}
 .phead{background:var(--navy);color:#b6c3d6;padding:48px 28px 44px}
@@ -240,7 +244,7 @@ footer{background:var(--navy);color:#93a4bd;font-size:13.5px}
 </div></header>
 <main>{{BODY}}</main>
 <footer><div class="foot">
-  <div><b>Securing AI Agents with Privileged Tool Access</b><br>Technical report, version 1.2 · Frank Cenedese, CISSP, CISA</div>
+  <div><b>Securing AI Agents with Privileged Tool Access</b><br>Technical report, version 1.3 · Frank Cenedese, CISSP, CISA</div>
   <div><a href="limitations.html">Scope and limitations</a> · <a href="https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory">Source on GitHub</a> · Contact: <a href="https://rarecyber.ca">rarecyber.ca</a></div>
 </div></footer>
 <script>
@@ -251,7 +255,7 @@ footer{background:var(--navy);color:#93a4bd;font-size:13.5px}
   document.getElementById('burger').onclick=function(){document.getElementById('tabs').classList.toggle('open')};
   document.querySelectorAll('article td').forEach(function(td){
     var s=td.textContent.trim();
-    if(/^(CRITICAL|HIGH|MEDIUM|PASS|FAIL|RESOLVED|TESTED|PARTIAL|PLANNED|OPEN|Critical|High|Medium)$/.test(s)) td.innerHTML='<i class="pill '+s.toLowerCase()+'">'+s.toUpperCase()+'</i>';
+    if(/^(CRITICAL|HIGH|MEDIUM|PASS|FAIL|RESOLVED|TESTED|VERIFIED|PARTIAL|PLANNED|OPEN|Critical|High|Medium)$/.test(s)) td.innerHTML='<i class="pill '+s.toLowerCase()+'">'+s.toUpperCase()+'</i>';
   });
   document.querySelectorAll('article h3').forEach(function(h){
     var m=h.textContent.match(/^([TRIAD]): /);

@@ -79,20 +79,43 @@ class MissingConfig(Exception):
     pass
 
 
-def mcp_call(tool: str, token: str | None, arguments: dict | None = None,
-             url: str | None = None, timeout: int = 20) -> requests.Response:
-    """Send an MCP JSON-RPC tools/call through the gateway."""
-    body = {"jsonrpc": "2.0", "id": int(time.time() * 1000), "method": "tools/call",
-            "params": {"name": tool, "arguments": arguments or {}}}
+def _headers(token: str | None, session_id: str | None = None) -> dict:
     headers = {"Content-Type": "application/json",
-               "Accept": "application/json, text/event-stream"}
+               "Accept": "application/json, text/event-stream",
+               "MCP-Protocol-Version": os.environ.get("MCP_PROTOCOL_VERSION", "2025-06-18")}
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if session_id:
+        headers["Mcp-Session-Id"] = session_id
     extra = os.environ.get("GATEWAY_EXTRA_HEADER")  # e.g. Ocp-Apim-Subscription-Key:abc
     if extra and ":" in extra:
         k, _, v = extra.partition(":")
         headers[k.strip()] = v.strip()
-    return requests.post(url or env("MCP_GATEWAY_URL"), json=body, headers=headers, timeout=timeout)
+    return headers
+
+
+def mcp_session(token: str, url: str | None = None) -> str | None:
+    """Open an MCP session (initialize + initialized) and return its session ID, if the server issues one."""
+    target = url or env("MCP_GATEWAY_URL")
+    init = {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+            "params": {"protocolVersion": os.environ.get("MCP_PROTOCOL_VERSION", "2025-06-18"),
+                       "capabilities": {}, "clientInfo": {"name": "triad-harness", "version": "1.3"}}}
+    r = requests.post(target, json=init, headers=_headers(token), timeout=20)
+    r.raise_for_status()
+    sid = r.headers.get("Mcp-Session-Id")
+    requests.post(target, json={"jsonrpc": "2.0", "method": "notifications/initialized"},
+                  headers=_headers(token, sid), timeout=20)
+    return sid
+
+
+def mcp_call(tool: str, token: str | None, arguments: dict | None = None,
+             url: str | None = None, timeout: int = 20, session: bool = False) -> requests.Response:
+    """Send an MCP JSON-RPC tools/call. With session=True, open a proper MCP session first."""
+    target = url or env("MCP_GATEWAY_URL")
+    sid = mcp_session(token, target) if session and token else None
+    body = {"jsonrpc": "2.0", "id": int(time.time() * 1000), "method": "tools/call",
+            "params": {"name": tool, "arguments": arguments or {}}}
+    return requests.post(target, json=body, headers=_headers(token, sid), timeout=timeout)
 
 
 def observe(resp: requests.Response) -> dict:
@@ -111,9 +134,30 @@ def result(test_id: str, status: str, expected: str, observed: dict | str, notes
     }
 
 
-def denied(resp: requests.Response) -> bool:
-    return resp.status_code in (401, 403)
+def _jsonrpc_error(resp: requests.Response) -> int | None:
+    """Return the JSON-RPC error code in a response body (plain JSON or SSE), if any."""
+    text = resp.text
+    for chunk in [text] + [l[5:].strip() for l in text.splitlines() if l.startswith("data:")]:
+        try:
+            err = json.loads(chunk).get("error")
+            if err:
+                return int(err.get("code", 0))
+        except (ValueError, AttributeError):
+            continue
+    return None
 
+
+def denied(resp: requests.Response) -> bool:
+    """Refused by the gateway (401/403) or by the MCP server with a configured JSON-RPC error code."""
+    if resp.status_code in (401, 403):
+        return True
+    codes = {int(c) for c in os.environ.get("DENIED_JSONRPC_CODES", "-32001,-32003").split(",") if c.strip()}
+    return _jsonrpc_error(resp) in codes
+
+
+def allowed(resp: requests.Response) -> bool:
+    """Succeeded: a 2xx response with no JSON-RPC error."""
+    return 200 <= resp.status_code < 300 and _jsonrpc_error(resp) is None
 
 # --------------------------------------------------------------------------- tests
 
@@ -221,10 +265,11 @@ def tc10(_: str) -> dict:
     over = mcp_call(env("WRITE_TOOL"), env("READ_WRITE_TOKEN"),
                     {"amount": float(env("OVER_LIMIT_AMOUNT", required=False) or 9999), "memo": "TRIAD TC-10 over"})
     within = mcp_call(env("WRITE_TOOL"), env("READ_WRITE_TOKEN"),
-                      {"amount": float(env("WITHIN_LIMIT_AMOUNT", required=False) or 50), "memo": "TRIAD TC-10 within"})
-    ok = denied(over) and not denied(within)
+                      {"amount": float(env("WITHIN_LIMIT_AMOUNT", required=False) or 50), "memo": "TRIAD TC-10 within"},
+                      session=True)
+    ok = denied(over) and allowed(within)
     return result("TC-10", "PASS" if ok else "FAIL",
-                  "Over-limit call refused (401/403); within-limit call not refused by authorization",
+                  "Over-limit call refused; within-limit call succeeds (2xx, no JSON-RPC error) in an MCP session",
                   {"over_limit": observe(over), "within_limit": observe(within)})
 
 
@@ -250,9 +295,9 @@ def tc12(_: str) -> dict:
         return result("TC-12", "PASS" if denied(standing) else "FAIL",
                       "Standing token refused for the high-risk tool", obs,
                       "Set ELEVATED_TOKEN (issued after approval) to also confirm the approved path works.")
-    elevated = mcp_call(env("WRITE_TOOL"), elevated_token, {"amount": 25, "memo": "TRIAD TC-12 elevated"})
+    elevated = mcp_call(env("WRITE_TOOL"), elevated_token, {"amount": 25, "memo": "TRIAD TC-12 elevated"}, session=True)
     obs["elevated_token"] = observe(elevated)
-    ok = denied(standing) and not denied(elevated)
+    ok = denied(standing) and allowed(elevated)
     return result("TC-12", "PASS" if ok else "FAIL",
                   "Standing token refused; approved, short-lived elevated token allowed", obs)
 
@@ -260,9 +305,9 @@ def tc12(_: str) -> dict:
 def tc13(_: str) -> dict:
     target = int(env("REVOCATION_TARGET_SECONDS", required=False) or 300)
     token = env("AGENT_TOKEN_TO_REVOKE")
-    first = mcp_call(env("READ_TOOL"), token)
-    if denied(first):
-        return result("TC-13", "ERROR", "", observe(first), "Token was already refused before revocation started.")
+    first = mcp_call(env("READ_TOOL"), token, {"customer_id": "C000001"}, session=True)
+    if not allowed(first):
+        return result("TC-13", "ERROR", "", observe(first), "The agent couldn't make a successful call before revocation started.")
     input("Disable the agent identity now, then press Enter to start the clock... ")
     start, last_ok, polls = time.time(), None, 0
     while time.time() - start < target + 60:
@@ -316,7 +361,7 @@ def main() -> int:
         "platform": args.platform,
         "environment": os.environ.get("ENVIRONMENT_NAME", "lab"),
         "operator": os.environ.get("OPERATOR", ""),
-        "harness": {"python": py_platform.python_version(), "script": "lab/triad_tests.py"},
+        "harness": {"python": py_platform.python_version(), "script": "lab/triad_tests.py", "version": "1.3"},
         "summary": {s: sum(1 for r in results if r["status"] == s)
                     for s in ("PASS", "FAIL", "MANUAL", "SKIPPED", "ERROR")},
         "results": results,

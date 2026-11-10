@@ -1,18 +1,16 @@
-// TC-03: one view of user, agent identity and tool for a test call.
-// Joins APIM gateway logs with Entra sign-in logs for agent identities.
-// Adjust the time window to cover the test run.
+// TC-03: one view of user, agent identity and tool for each test call.
+// Reads the "mcp-audit" trace written by the APIM policy in Configuration change C3:
+//   oid=<user object ID> upn=<user UPN> agent=<agent app ID (azp)> tool=<tool name>
+// Requires APIM diagnostics in resource-specific mode with trace records enabled.
 let window = 2h;
 ApiManagementGatewayLogs
 | where TimeGenerated > ago(window)
 | where ApiId has "mcp"
-| extend Tool = tostring(parse_json(BackendRequestBody).params.name)
-| project TimeGenerated, CorrelationId, CallerIpAddress, ResponseCode, Tool
-| join kind=leftouter (
-    AADServicePrincipalSignInLogs
-    | where TimeGenerated > ago(window)
-    | project SignInTime = TimeGenerated, AgentId = ServicePrincipalId, AgentName = ServicePrincipalName, IPAddress
-  ) on $left.CallerIpAddress == $right.IPAddress
-| project TimeGenerated, Tool, ResponseCode, AgentName, AgentId, CorrelationId
+| mv-expand Trace = TraceRecords
+| where tostring(Trace.source) == "mcp-audit"
+| extend Msg = tostring(Trace.message)
+| parse Msg with "oid=" UserObjectId " upn=" UserPrincipalName " agent=" AgentAppId " tool=" Tool
+| project TimeGenerated, CorrelationId, ResponseCode, UserObjectId, UserPrincipalName, AgentAppId, Tool
 | order by TimeGenerated desc
-// Expected: each test call shows the tool, the decision (200/403) and the agent identity.
-// The user principal is added by logging the token's upn/oid claim in the APIM policy (see Configuration page).
+// Pass: every test call returns one row with the user's object ID, the agent's ID, the tool and the decision.
+// Authorization keys on UserObjectId; the UPN is shown for readability only.

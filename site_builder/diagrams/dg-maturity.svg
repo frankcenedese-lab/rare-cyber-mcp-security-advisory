@@ -7,10 +7,10 @@
 <text class="lv-n" x="44" y="258">LEVEL 1</text><text class="t1" x="44" y="278">Shared credential</text><text class="t2" x="44" y="293">one identity, all tools</text></g>
 
 <g><rect class="lvl done" x="226" y="196" width="184" height="104" rx="8"/>
-<text class="lv-n" x="240" y="218">LEVEL 2</text><text class="t1" x="240" y="238">Per-tool identity</text><text class="t2" x="240" y="256">a role per tool,</text><text class="t2" x="240" y="271">checked at the gateway</text></g>
+<text class="lv-n" x="240" y="218">LEVEL 2</text><text class="t1" x="240" y="238">Per-tool identity</text><text class="t2" x="240" y="256">a role per tool,</text><text class="t2" x="240" y="271">user recorded</text><text class="t2" x="240" y="286">for attribution</text></g>
 
 <g><rect class="lvl next" x="422" y="156" width="184" height="144" rx="8"/>
-<text class="lv-n" x="436" y="178">LEVEL 3</text><text class="t1" x="436" y="198">Delegated and</text><text class="t1" x="436" y="215">audience-bound</text><text class="t2" x="436" y="234">user + agent in the token</text><text class="t2" x="436" y="249">one audience per token</text><text class="t2" x="436" y="264">no passthrough</text></g>
+<text class="lv-n" x="436" y="178">LEVEL 3</text><text class="t1" x="436" y="198">Delegated and</text><text class="t1" x="436" y="215">audience-bound</text><text class="t2" x="436" y="234">capped at user's rights</text><text class="t2" x="436" y="249">one audience per token</text><text class="t2" x="436" y="264">no passthrough</text></g>
 
 <g><rect class="lvl next" x="618" y="116" width="184" height="184" rx="8"/>
 <text class="lv-n" x="632" y="138">LEVEL 4</text><text class="t1" x="632" y="158">Least privilege in</text><text class="t1" x="632" y="175">scope and time</text><text class="t2" x="632" y="194">parameter-level policy</text><text class="t2" x="632" y="209">separation of duties</text><text class="t2" x="632" y="224">just-in-time + approval</text><text class="t2" x="632" y="239">sender-constrained tokens</text></g>

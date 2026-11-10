@@ -1,6 +1,6 @@
 # Threat Model: STRIDE Analysis of the AI Agent Lab
 
-**Method:** STRIDE, extended for agentic AI  
+**Method:** STRIDE, checked against CSA MAESTRO and the OWASP Top 10 for Agentic Applications  
 **Scope:** AI agent, MCP gateway, tool server and data in the AWS lab, with Microsoft equivalents  
 **Status:** Living model, updated as tests are run  
 **Last reviewed:** November 2026
@@ -22,10 +22,10 @@ Every test in this lab exists because the threat model said it should. That is t
 | **External content** | Emails, documents, tickets and web pages the agent reads | Untrusted |
 | **User** | The person who starts the agent session | Authenticated |
 | **AI agent (MCP client)** | Decides which tools to call based on the user's request and the content it reads | Semi-trusted: it can be steered |
-| **Identity provider** | IAM on AWS, Entra Agent ID on Microsoft | Trusted |
+| **Identity provider** | AWS IAM and STS for workload identities; Entra ID with Agent ID on Microsoft | Trusted |
 | **API gateway** | Amazon API Gateway or Azure API Management; checks every tool call | Trusted control point |
 | **Tool registry** | Where approved tool definitions live (Git, Azure API Center) | Trusted, change controlled |
-| **MCP tool server** | Read tools, a financial write tool and a data export tool | Trusted, but only as safe as the identity it runs under |
+| **MCP tool server** | Four tools: customer lookup, journal entry, journal approval and data export | Trusted, but only as safe as the identity it runs under |
 | **Business data** | Finance and customer records | Crown jewels |
 | **Audit logging** | CloudTrail on AWS, Sentinel and Purview on Microsoft | Trusted, must be tamper resistant |
 
@@ -40,20 +40,23 @@ Every test in this lab exists because the threat model said it should. That is t
 | **S1** | Spoofing | Agent connects to an unapproved or look-alike MCP server | High | **I** Approved registry; gateway is the only route to tools | TC-04 | PLANNED |
 | **S2** | Spoofing | Agent token stolen or replayed from another context | High | **R** Short-lived tokens; Conditional Access for agents | TC-04 | PLANNED |
 | **T1** | Tampering | Instructions hidden in content steer the agent (indirect prompt injection) | Critical | **T** Content inspection before the agent acts | TC-02 | TESTED |
-| **T2** | Tampering | A tool's definition or description is changed to mislead the agent (tool poisoning) | High | **I** Hashed, version-controlled definitions | TC-06 | TESTED |
+| **T2** | Tampering | A tool's definition or description is changed to mislead the agent (tool poisoning) | High | **I** Hashed, version-controlled definitions | TC-06 | VERIFIED |
 | **R1** | Repudiation | A harmful action can't be traced to a user, agent or policy | High | **A** User, agent and tool correlated in one log | TC-03 | TESTED |
 | **I1** | Information disclosure | Agent exports records beyond what the task needs | Critical | **R** Export tool gated by its own role | TC-07 | PLANNED |
 | **I2** | Information disclosure | Sensitive data leaks into prompts, responses or logs | Medium | DLP and Purview labels; log redaction | Review | OPEN |
+| **I3** | Information disclosure | Agent leaks data through its own responses: summaries, links or rendered images that carry data out | High | **T** Output inspection and egress controls on responses | Review | OPEN |
 | **D1** | Denial of service | Agent loops on tool calls, exhausting quotas or budget | Medium | Gateway rate limits and quotas per agent | TC-05 | PLANNED |
 | **E1** | Elevation of privilege | All tools share one role, so a read task can perform writes (Identity Flattening) | Critical | **R** One scoped identity per tool | TC-01 | TESTED |
 | **E2** | Elevation of privilege | Confused deputy: agent uses its own broad rights on an attacker's behalf | High | **R** Gateway checks the user's context, not just the agent's | TC-08 | PLANNED |
 | **S3** | Spoofing | A token issued for one MCP server is accepted by another, or forwarded downstream | High | **R** Audience-bound tokens; no passthrough | TC-09 | PLANNED |
 | **E3** | Elevation of privilege | Agent uses an allowed tool beyond intended limits (amount, records, scope) | High | **R** Parameter-level policy per call | TC-10 | PLANNED |
-| **E4** | Elevation of privilege | One agent holds conflicting duties, such as posting and approving | High | **R** Separation of duties rules on role assignment | TC-11 | TESTED |
+| **E4** | Elevation of privilege | One agent holds conflicting duties, such as posting and approving | High | **R** Separation of duties rules on role assignment | TC-11 | VERIFIED |
 | **E5** | Elevation of privilege | Standing privilege on high-risk tools | High | **R** Just-in-time elevation with human approval | TC-12 | PLANNED |
-| **E6** | Elevation of privilege | A compromised agent keeps access after it is disabled | High | **A** Measured revocation; short token lifetimes | TC-13 | PLANNED |
+| **E6** | Elevation of privilege | A compromised agent keeps access after it is disabled | High | **R** Measured revocation; short token lifetimes | TC-13 | PLANNED |
 
-Risk ratings are initial, set before testing, and are revisited as each test produces evidence. Threats S3 and E3 to E6 were added in version 1.2 from the [Identity Architecture](identity-architecture.md) analysis.
+Statuses: **TESTED** means run against the deployed lab; **VERIFIED** means the control logic was checked in the repository and CI, not in a deployed environment; **PLANNED** means a test is defined but not yet run; **OPEN** means no test is defined yet.
+
+Risk ratings are initial, set before testing, and are revisited as each test produces evidence. Threats S3 and E3 to E6 were added in version 1.2 from the [Identity Architecture](identity-architecture.md) analysis, and I3 in version 1.3.
 
 ---
 
@@ -76,7 +79,7 @@ In this lab, STRIDE is the backbone because every security team already knows it
 4. **Trace to tests:** each accepted threat gets a control and a test on both AWS and Microsoft.
 5. **Update on evidence:** when a test runs, its status and the risk rating are updated here and on the [Results](evidence/index.md) page.
 
-Every test is automated in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), so any result on this site can be re-run and reproduced.
+Every test is defined in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), so results produced from version 1.1 onward can be re-run and reproduced. TC-03 needs an analyst to attach query output, and TC-13 needs the operator to disable the agent during the run.
 
 ---
 

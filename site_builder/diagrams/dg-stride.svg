@@ -36,7 +36,7 @@
 <rect class="box" x="620" y="160" width="170" height="100" rx="9"/>
 <text class="t1" x="705" y="184" text-anchor="middle">MCP Tool Server</text>
 <rect class="chip" x="634" y="194" width="142" height="18" rx="4"/><text class="t3" x="642" y="207">read tools</text>
-<rect class="chip bad" x="634" y="216" width="142" height="18" rx="4"/><text class="t3 r" x="642" y="229">financial write</text>
+<rect class="chip bad" x="634" y="216" width="142" height="18" rx="4"/><text class="t3 r" x="642" y="229">write · approve</text>
 <rect class="chip bad" x="634" y="238" width="142" height="16" rx="4"/><text class="t3 r" x="642" y="250">data export</text>
 
 <rect class="box" x="832" y="170" width="180" height="80" rx="9"/>
@@ -69,6 +69,7 @@
 <g class="bdg"><circle cx="812" cy="250" r="14" fill="#0d9488"/><text x="812" y="254">I1</text></g>
 <g class="bdg"><circle cx="1000" cy="324" r="14" fill="#2563eb"/><text x="1000" y="328">R1</text></g>
 <g class="bdg"><circle cx="600" cy="292" r="14" fill="#7c3aed"/><text x="600" y="296">S3</text></g>
+<g class="bdg"><circle cx="300" cy="136" r="14" fill="#0d9488"/><text x="300" y="140">I3</text></g>
 <g class="bdg"><circle cx="650" cy="266" r="14" fill="#dc2626"/><text x="650" y="270">E3</text></g>
 <g class="bdg"><circle cx="760" cy="266" r="14" fill="#dc2626"/><text x="760" y="270">E4</text></g>
 <g class="bdg"><circle cx="400" cy="56" r="14" fill="#dc2626"/><text x="400" y="60">E5</text></g>

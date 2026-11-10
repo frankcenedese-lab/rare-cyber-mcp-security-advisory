@@ -1,9 +1,6 @@
 # Securing AI Agents with Privileged Tool Access
 
-A threat-modelled lab on AWS and Microsoft. Technical report by Frank Cenedese, CISSP, CISA.
-
-[![Governance Standard: TRIAD v1.0](https://img.shields.io/badge/Governance-TRIAD%20v1.0-blue.svg)](#the-triad-framework)
-[![Compliance Alignment: NIST / ISO / OWASP](https://img.shields.io/badge/Compliance-NIST%20%7C%20ISO%2042001%20%7C%20OWASP-green.svg)](#standards--compliance-mapping)[![Cloud Focus: Multi-Cloud AWS & Azure](https://img.shields.io/badge/Multi--Cloud-AWS%20%26%20Microsoft-orange.svg)](#multi-cloud-architecture)
+A threat-modelled lab on AWS and Microsoft. Technical report (version 1.3) by Frank Cenedese, CISSP, CISA.
 
 ---
 
@@ -26,7 +23,7 @@ AI agents connected to business systems through the Model Context Protocol (MCP)
 | 4. Configuration and Policy Changes | [docs/configuration.md](docs/configuration.md) |
 | 5. Testing Guide | [docs/advisory/testing-guide.md](docs/advisory/testing-guide.md) |
 | 6. Results and Evidence | [docs/evidence/index.md](docs/evidence/index.md) |
-| 7. Scope, Limitations and Change Log | [docs/limitations.md](docs/limitations.md) |
+| 7. Scope, Limitations, Residual Risk and Change Log | [docs/limitations.md](docs/limitations.md) |
 | Appendix: Executive Summary | [docs/advisory/executive-brief.md](docs/advisory/executive-brief.md) |
 
 ---

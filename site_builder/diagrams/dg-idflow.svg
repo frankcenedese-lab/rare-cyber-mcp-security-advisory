@@ -69,7 +69,7 @@
   <text class="tk" x="16" y="52">sub   alice</text>
   <text class="tk" x="16" y="72">act   agent-finance-01</text>
   <text class="tk" x="16" y="92">aud   mcp-finance</text>
-  <text class="tk" x="16" y="112">roles FinancialWrite · exp 10 min</text>
+  <text class="tk" x="16" y="112">roles FinancialWrite · exp 15 min</text>
   <text class="tk" x="16" y="132">cnf   bound to agent key (DPoP)</text>
 </g>
 <g transform="translate(710,340)">
@@ -78,7 +78,7 @@
   <text class="tk" x="16" y="52">sub   alice (on behalf of)</text>
   <text class="tk" x="16" y="72">azp   mcp-finance</text>
   <text class="tk" x="16" y="92">aud   erp-api</text>
-  <text class="tk" x="16" y="112">scope journal.post · exp 5 min</text>
+  <text class="tk" x="16" y="112">scope journal.post · exp 15 min</text>
   <text class="t2" x="16" y="140">Issued to the server for this API only.</text>
 </g>
 <path class="fl grey dash" d="M95 254 V336" marker-end="url(#fk)"/>
@@ -87,7 +87,7 @@
 <text class="lg" x="30" y="522"><tspan font-weight="700">1</tspan>  User signs in and receives token A</text>
 <text class="lg" x="30" y="542"><tspan font-weight="700">2</tspan>  Agent exchanges token A for token B</text>
 <text class="lg" x="30" y="562"><tspan font-weight="700">3</tspan>  Agent calls the gateway with token B</text>
-<text class="lg" x="530" y="522"><tspan font-weight="700">4</tspan>  Gateway checks audience, user, agent, role and amount, then forwards</text>
+<text class="lg" x="530" y="522"><tspan font-weight="700">4</tspan>  Gateway (on AWS, the MCP server) checks audience, user, agent, role, amount</text>
 <text class="lg" x="530" y="542"><tspan font-weight="700">5</tspan>  MCP server obtains its own token C</text>
 <text class="lg" x="530" y="562"><tspan font-weight="700">6</tspan>  MCP server calls the ERP API with token C</text>
 <text class="lg" x="30" y="588">Claim values are illustrative. Gateway and MCP server reject any token whose audience is not their own.</text>

@@ -2,7 +2,7 @@
 
 **Method:** Delegated authorization, least privilege in scope and time, identity lifecycle  
 **Standards:** MCP authorization specification · OAuth 2.1 · RFC 8693 · RFC 8707 · RFC 9449  
-**Status:** Levels 1 and 2 implemented and tested; levels 3 to 5 designed, with tests defined  
+**Status:** Level 2 implemented and tested, with user attribution; levels 3 to 5 designed, with tests defined  
 **Last reviewed:** November 2026
 
 ---
@@ -29,7 +29,7 @@ These are the minimum controls for any agent allowed to reach production systems
 
 **A. Tool-scoped workload identities.** Each tool function runs under its own identity with one permission set: an IAM role per tool on AWS, a managed identity or app registration per tool on Microsoft. A read-only tool must have no authorization path to write or delete. Conflicting duties, such as posting and approving, must never share an identity.
 
-**B. Ephemeral credential brokering.** No static API keys or long-lived tokens in tool configuration. Credentials are issued at runtime through workload identity federation or managed identities, with access tokens limited to **60 minutes**, and **15 minutes or less** for high-risk tools. On Microsoft, Entra access tokens default to a longer, variable lifetime, so meeting this standard needs a token lifetime policy or continuous access evaluation.
+**B. Ephemeral credential brokering.** No static API keys or long-lived tokens in tool configuration. Credentials are issued at runtime through workload identity federation or managed identities, with access tokens limited to **60 minutes**, and **15 minutes** for high-risk tools. Fifteen minutes is the shortest role session AWS STS allows. On Microsoft, Entra access tokens default to a longer, variable lifetime, so meeting this standard needs a token lifetime policy or continuous access evaluation.
 
 **C. User-to-agent delegation.** Human-initiated requests use delegation (OAuth on-behalf-of or token exchange), never token passthrough. The agent can't call any tool or reach any resource the initiating user isn't authorized for. Authorization keys on the user's immutable object ID (`oid` in Entra, principal ID in AWS); the UserPrincipalName is logged for readability but never used to decide access, because it can change.
 
@@ -63,10 +63,11 @@ Each hop gets a new token, bound to the next audience. The agent's token names b
 | Security layer | AWS | Microsoft |
 | :--- | :--- | :--- |
 | **Gateway authentication** | Amazon API Gateway with IAM (SigV4) authorization | Azure API Management with `validate-azure-ad-token` |
+| **Per-tool enforcement** | In the MCP server or a proxy in front of it: API Gateway authorizers can't read the request body, where MCP carries the tool name | In the APIM policy, which reads the tool name from the request body |
 | **Agent identity** | IAM role for the agent runtime, with required owner tags | Entra Agent ID, with owner and sponsor |
 | **Tool identity** | One IAM execution role per Lambda function or container | App registration per tool: app roles for app-only calls, scopes for delegated calls |
 | **Delegated access** | `AssumeRoleWithWebIdentity` for federation, with the user carried as source identity or session tags | Entra on-behalf-of flow |
-| **Token audience** | Resource indicator on the token request; audience checked at the gateway and server | `aud` validated by APIM and the MCP server |
+| **Token audience** | Role permissions scoped to the specific API and resource ARNs; where an OAuth provider such as Amazon Cognito fronts the gateway, its token `aud` is validated | `aud` validated by APIM and the MCP server |
 | **Access conditions** | IAM condition keys (source network, MFA, session duration) | Conditional Access for agents and workload identities |
 | **Data boundary** | IAM resource-based policies and AWS KMS key policies | Purview sensitivity labels and DLP; Key Vault with customer-managed keys |
 
@@ -79,8 +80,8 @@ Each hop gets a new token, bound to the next audience. The agent's token names b
 | Level | Name | What it means | Lab status |
 | :--- | :--- | :--- | :--- |
 | **1** | Shared credential | Every tool runs under one service identity | Baseline, tested |
-| **2** | Per-tool identity | Each tool has its own role; the gateway checks it on every call | Implemented, tested |
-| **3** | Delegated and audience-bound | Tokens carry user and agent; each is bound to one server; no passthrough | Designed, tests TC-08, TC-09 |
+| **2** | Per-tool identity | Each tool runs under its own role and is checked on every call; the user is recorded for attribution | Implemented, tested |
+| **3** | Delegated and audience-bound | Authorization is capped at the user's rights; tokens carry user and agent, are bound to one server and are never passed through | Designed, tests TC-08, TC-09 |
 | **4** | Least privilege in scope and time | Parameter-level policy, separation of duties, just-in-time elevation with approval, sender-constrained tokens | Designed, tests TC-10 to TC-12 |
 | **5** | Governed | Every agent has an owner, access reviews, orphan detection, measured revocation and behavioural detection | Designed, test TC-13 |
 
@@ -88,7 +89,7 @@ Each hop gets a new token, bound to the next audience. The agent's token names b
 
 ## Level 3: delegated and audience-bound
 
-**Delegation.** The agent exchanges the user's token for one that names both parties. On AWS, the agent assumes the per-tool role with the user set as the session's source identity. With a standards-based identity provider, OAuth token exchange (RFC 8693) adds an `act` claim naming the agent. On Microsoft, the on-behalf-of flow issues a token that keeps the user's identity and roles. Either way, the gateway can refuse any call the user couldn't make directly (TC-08).
+**Delegation.** Level 2 already records the user for attribution. Level 3 goes further: the user's rights limit what the agent may do. With a standards-based identity provider, OAuth token exchange (RFC 8693) issues a token naming both parties, with an `act` claim for the agent. On Microsoft, the on-behalf-of flow issues a token that keeps the user's identity and roles, which the gateway checks. On AWS, the user travels as the role session's source identity, but source identity only records who the user is; a policy engine such as Amazon Verified Permissions must look up the user's entitlements and refuse calls beyond them. In every case the agent is refused any call the user couldn't make directly (TC-08).
 
 **Audience binding.** The agent requests each token for one MCP server, using the `resource` parameter. The gateway and the MCP server reject any token whose audience isn't theirs (TC-09).
 

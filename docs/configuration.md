@@ -1,4 +1,4 @@
-# Configuration & Policy Changes: Before and After
+# Configuration and Policy Changes: Before and After
 
 **Scope:** Every configuration and governance policy change behind the TRIAD results  
 **Environments:** AWS lab · Microsoft equivalents  
@@ -23,8 +23,8 @@ Examples use placeholder account IDs, names and GUIDs. They're reference pattern
 | # | Change | Threats | Test | AWS | Microsoft |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | C1 | Split the shared role into one role per tool | E1, I1 | TC-01, TC-07 | IAM roles | Entra app roles |
-| C2 | Enforce identity and scope at the gateway | E1, E2, S2 | TC-01, TC-08 | API Gateway IAM auth | APIM `validate-azure-ad-token` |
-| C3 | Carry the user's identity through to every tool call | R1, E2 | TC-03, TC-08 | STS source identity | On-behalf-of token + logged claim |
+| C2 | Enforce identity at the gateway and the role per tool | E1, E2, S2 | TC-01, TC-08 | API Gateway IAM auth + per-tool check in the MCP server | APIM `validate-azure-ad-token` per tool, default deny |
+| C3 | Record the user's identity in every tool call (attribution) | R1 | TC-03 | STS source identity | Logged user claims |
 | C4 | Inspect untrusted content before the agent acts | T1 | TC-02 | Bedrock Guardrails | Prompt Shields |
 | C5 | Throttle tool calls per agent | D1 | TC-05 | Usage plan throttling | APIM `rate-limit-by-key` |
 | C6 | Lock tool definitions to approved versions | T2, S1 | TC-04, TC-06 | Pipeline hash check | Pipeline hash check + API Center |
@@ -113,7 +113,7 @@ Each agent's Agent ID is granted only the roles its job needs.
 
 ---
 
-## C2. Enforce identity and scope at the gateway
+## C2. Enforce identity at the gateway and the role per tool
 
 <div class="ba" markdown="1">
 <div class="before" markdown="1">
@@ -158,14 +158,16 @@ x-amazon-apigateway-auth:
 </validate-azure-ad-token>
 ```
 
-The full per-tool policy is in the [Testing Guide](advisory/testing-guide.md#3-reference-apim-policy-per-tool-scope-enforcement).
+The full per-tool policy, with default deny for unlisted tools, is in the [Testing Guide](advisory/testing-guide.md#3-reference-apim-policy-per-tool-scope-enforcement).
+
+On AWS, API Gateway authorizers can't read the request body, where MCP carries the tool name. The gateway authenticates the caller; the MCP server then checks the caller's role against the tool's `required_role` in the [tool definitions](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/blob/main/lab/tools/tool_definitions.json) and refuses unlisted tools. Each tool also executes under its own IAM role, so a call that passes the wrong check still lacks the permission to act.
 
 </div>
 </div>
 
 ---
 
-## C3. Carry the user's identity into every tool call
+## C3. Record the user's identity in every tool call
 
 <div class="ba" markdown="1">
 <div class="before" markdown="1">
@@ -188,7 +190,7 @@ Logs show the role, never the person behind it.
   "Effect": "Allow",
   "Principal": { "AWS": "arn:aws:iam::123456789012:role/mcp-agent-runtime" },
   "Action": ["sts:AssumeRole", "sts:SetSourceIdentity"],
-  "Condition": { "StringLike": { "sts:SourceIdentity": "*@example.com" } }
+  "Condition": { "Null": { "sts:SourceIdentity": "false" } }
 }
 ```
 
@@ -196,11 +198,13 @@ Logs show the role, never the person behind it.
 <!-- APIM: record who the agent is acting for -->
 <trace source="mcp-audit" severity="information">
   <message>@{
-    var jwt = context.Request.Headers.GetValueOrDefault("Authorization","").AsJwt();
-    return $"user={jwt?.Claims.GetValueOrDefault("upn","")} tool={context.Variables.GetValueOrDefault<string>("toolName")}";
+    var jwt = context.Request.Headers.GetValueOrDefault("Authorization","").Split(' ').Last().AsJwt();
+    return $"oid={jwt?.Claims.GetValueOrDefault("oid","")} upn={jwt?.Claims.GetValueOrDefault("upn","")} agent={jwt?.Claims.GetValueOrDefault("azp","")} tool={context.Variables.GetValueOrDefault<string>("toolName")}";
   }</message>
 </trace>
 ```
+
+The source identity is set to the user's immutable ID from the identity provider, never an email address or UPN, which can change. Both platforms record the UPN for readability only. This change provides attribution; refusing calls beyond the user's own rights is level 3 delegation (TC-08).
 
 </div>
 </div>
@@ -235,6 +239,8 @@ Instructions hidden in an email are read and followed.
 }
 ```
 
+Tool output is passed to the guardrail through the `ApplyGuardrail` API before the agent sees it. The prompt attack filter is designed mainly for user input, so TC-02 must confirm on AWS that it catches injection carried in documents and tool output.
+
 On Microsoft, Prompt Shields is enabled in the deployment's content filter, with untrusted tool output passed as **documents** so indirect attacks are evaluated.
 
 </div>
@@ -254,15 +260,17 @@ An agent caught in a loop can call tools until quotas or budgets run out.
 </div>
 <div class="after" markdown="1">
 
-**After:** limits per agent identity
+**After:** limits per agent
 
 ```json
 "throttle": { "rateLimit": 10, "burstLimit": 20 }
 ```
 
+On AWS, usage plans throttle per API key, so each agent is issued its own key in the plan, or an AWS WAF rate-based rule is keyed on the agent's identity header.
+
 ```xml
 <rate-limit-by-key calls="30" renewal-period="60"
-  counter-key="@(context.Request.Headers.GetValueOrDefault("Authorization","").AsJwt()?.Claims.GetValueOrDefault("oid",""))" />
+  counter-key="@(context.Request.Headers.GetValueOrDefault("Authorization","").Split(' ').Last().AsJwt()?.Claims.GetValueOrDefault("oid",""))" />
 ```
 
 </div>
