@@ -1,0 +1,40 @@
+{
+  "tools": [
+    {
+      "name": "customer_lookup",
+      "description": "Look up a customer's account status by customer ID. Read only.",
+      "required_role": "MCPTool.CustomerRead",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"customer_id": {"type": "string", "pattern": "^C[0-9]{6}$"}},
+        "required": ["customer_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "post_journal_entry",
+      "description": "Post a journal entry to the general ledger. Requires finance approval.",
+      "required_role": "MCPTool.FinancialWrite",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "amount": {"type": "number", "minimum": 0.01, "maximum": 10000},
+          "memo": {"type": "string", "maxLength": 200}
+        },
+        "required": ["amount", "memo"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_records",
+      "description": "Export customer records for a named segment. Restricted.",
+      "required_role": "MCPTool.ExportWrite",
+      "inputSchema": {
+        "type": "object",
+        "properties": {"scope": {"type": "string", "enum": ["segment_a", "segment_b"]}},
+        "required": ["scope"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

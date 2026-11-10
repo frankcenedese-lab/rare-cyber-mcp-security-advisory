@@ -1,0 +1,20 @@
+name: Verify MCP tool definitions (TRIAD TC-06)
+
+on:
+  push:
+    paths: ["lab/tools/**", "lab/tool_lock.py"]
+  pull_request:
+    paths: ["lab/tools/**", "lab/tool_lock.py"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python lab/tool_lock.py verify

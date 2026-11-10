@@ -1,9 +1,23 @@
 # Evidence Baseline
 
-Assessment output from the TRIAD baseline, before and after hardening. Each finding maps to a NIST SP 800-53 control and to a validation test in the [Microsoft Architecture Guide](../advisory/azure-copilot-mapping.md#5-validation-test-plan).
+Assessment output from the TRIAD baseline, before and after hardening. Each finding maps to a NIST SP 800-53 control and to a validation test in the [Testing Guide](../advisory/testing-guide.md#5-validation-test-plan).
 
 !!! note "About this evidence"
-    These files are a **sample of the assessment output format** produced against a lab environment. Account identifiers are placeholders. Microsoft results are added as each test in the validation plan is run in a tenant.
+    The baseline files below are from the lab environment; account identifiers are placeholders. New results come from the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab) and are added to the run log as each test is run.
+
+## Evidence standard
+
+A result counts as evidence only when it records:
+
+| Element | Why it matters |
+| :--- | :--- |
+| Test ID and the threat it traces to | Proves the test exists for a reason, not as activity |
+| Expected and observed outcome | Shows the pass condition was set before the test ran |
+| UTC timestamp, environment and operator | Establishes when, where and by whom |
+| SHA-256 hash of the raw observation | Makes later editing detectable |
+| Attached output for manual tests | Lets a reviewer re-perform the check |
+
+Runs are never edited. A re-test is a new run.
 
 ---
 

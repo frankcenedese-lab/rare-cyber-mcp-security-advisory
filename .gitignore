@@ -1,3 +1,6 @@
+_site/
 site/
 __pycache__/
 .venv/
+lab/.env
+docs/evidence/runs/*.tmp

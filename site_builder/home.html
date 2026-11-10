@@ -1,0 +1,117 @@
+<section class="hero">
+  <div class="hero-in">
+    <div class="eyebrow">Case study · AI agent security &amp; governance</div>
+    <h1>What happens when the privileged account <span>isn't a person anymore?</span></h1>
+    <p class="lede">I built an AI agent environment, attacked it the way real adversaries do, hardened it with a control framework I designed, and proved the result with evidence. This site walks through the work, and what it means for your team.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="the-build.html">See the build</a>
+      <a class="btn ghost" href="#work-with-me">Work with me</a>
+    </div>
+  </div>
+  <div class="hero-card">
+    <div class="hc-h">Lab assessment · baseline vs hardened</div>
+    <div class="score-row">
+      <div class="score bad"><b>8.9</b><span>Before<br>Critical</span></div>
+      <div class="arrow">→</div>
+      <div class="score good"><b>0.2</b><span>After TRIAD<br>Low</span></div>
+    </div>
+    <ul class="mini">
+      <li><i class="pill pass">PASS</i>Per-tool identities</li>
+      <li><i class="pill pass">PASS</i>Injection guardrails</li>
+      <li><i class="pill pass">PASS</i>User-correlated audit</li>
+    </ul>
+  </div>
+</section>
+
+<section class="strip">
+  <div><b>10</b><span>STRIDE threats modelled</span></div>
+  <div><b>5</b><span>TRIAD control pillars</span></div>
+  <div><b>8</b><span>automated test cases</span></div>
+  <div><b>2</b><span>clouds: AWS + Microsoft</span></div>
+</section>
+<section class="block paths-wrap">
+  <div class="sec-h"><div class="kicker">Who this is for</div><h2>Two reasons you might be here</h2></div>
+  <div class="paths">
+    <div class="path">
+      <div class="tag">Hiring teams &amp; agencies</div>
+      <h3>You need a GRC or AI security advisor on contract</h3>
+      <p>This is a working example of how I approach a problem: build it, test it, control it, and leave evidence an auditor will accept.</p>
+      <ul><li>Control design mapped to NIST, AI RMF and ISO/IEC 42001</li><li>Audit-ready evidence, before and after remediation</li><li>Hands-on identity architecture on AWS and Microsoft</li></ul>
+      <a class="go" href="#work-with-me">What I bring to a contract →</a>
+    </div>
+    <div class="path">
+      <div class="tag">Organizations</div>
+      <h3>You're putting AI agents into production</h3>
+      <p>The same method, run against your environment, shows what your agents can reach today and what it takes to make them defensible.</p>
+      <ul><li>An inventory of agents, tools and their real access</li><li>Testing against injection and privilege misuse</li><li>A remediation roadmap and an evidence pack</li></ul>
+      <a class="go" href="#work-with-me">How an engagement works →</a>
+    </div>
+  </div>
+</section>
+
+
+<section class="block">
+  <div class="sec-h"><div class="kicker">The problem</div><h2>Default MCP deployments give every tool the keys to everything</h2></div>
+  <div class="grid3">
+    <div class="card risk"><div class="num">01</div><h3>Identity Flattening</h3><p>Every tool runs under one shared, elevated credential. A read-only lookup and a destructive write carry the same authority.</p><code>AC-3 · AC-6</code></div>
+    <div class="card risk"><div class="num">02</div><h3>Indirect Prompt Injection</h3><p>A poisoned document, ticket or email hijacks the agent and triggers tool calls nobody approved.</p><code>SI-10 · SI-16</code></div>
+    <div class="card risk"><div class="num">03</div><h3>Audit Blind Spots</h3><p>Logs show an API call but not which person, which agent or which tool. You can't prove what happened.</p><code>AU-2 · AU-12</code></div>
+  </div>
+</section>
+
+
+<section class="block">
+  <div class="sec-h"><div class="kicker">The work</div><h2>Build it, model it, break it, fix it, prove it</h2></div>
+  <div class="steps">
+    <div class="stp"><b>01</b><h3>Build</h3><p>An AI agent wired to business tools through MCP, deployed the way most teams do by default.</p></div>
+    <div class="stp"><b>02</b><h3>Model</h3><p>A STRIDE threat model of the architecture: ten threats across five trust boundaries, each traced to a test. <a href="threat-model.html">View →</a></p></div>
+    <div class="stp"><b>03</b><h3>Break</h3><p>Out-of-scope actions, indirect prompt injection and an accountability trace. All three failed.</p></div>
+    <div class="stp"><b>04</b><h3>Fix</h3><p>Six configuration changes and eight policy updates, shown before and after. <a href="configuration.html">View →</a></p></div>
+    <div class="stp"><b>05</b><h3>Prove</h3><p>Same tests re-run. Evidence captured and mapped to NIST SP 800-53 and ISO/IEC 42001.</p></div>
+  </div>
+  <a class="btn outline" href="the-build.html">Read the full case study →</a>
+</section>
+<section class="block alt">
+  <div class="sec-h"><div class="kicker">The framework</div><h2>TRIAD: five controls, enforced the same way on both clouds</h2></div>
+  <div class="triad">
+    <div class="pillar"><div class="L">T</div><h3>Threat Modeling &amp; Poison Analysis</h3><p>Sanitize tool output and enforce strict schema validation.</p><div class="chips"><span class="aws">Bedrock Guardrails</span><span class="ms">Prompt Shields</span></div></div>
+    <div class="pillar"><div class="L">R</div><h3>Rigid Identity Decoupling</h3><p>One scoped identity per tool function, enforced at the gateway.</p><div class="chips"><span class="aws">IAM role per tool</span><span class="ms">Entra Agent ID</span></div></div>
+    <div class="pillar"><div class="L">I</div><h3>Immutable Governance</h3><p>Hashed, version-controlled tool definitions. No change outside the pipeline.</p><div class="chips"><span class="aws">Git + pipeline</span><span class="ms">API Center · Bicep</span></div></div>
+    <div class="pillar"><div class="L">A</div><h3>Audit Telemetry &amp; Correlation</h3><p>Every tool call tied to the human user and the agent identity.</p><div class="chips"><span class="aws">CloudTrail</span><span class="ms">Sentinel · Purview</span></div></div>
+    <div class="pillar"><div class="L">D</div><h3>Dual-Ecosystem Enforcement</h3><p>Same policy, same tests, same evidence on AWS and Microsoft.</p><div class="chips"><span class="aws">AWS</span><span class="ms">Microsoft</span></div></div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="sec-h"><div class="kicker">The attack path</div><h2>Same attack, two outcomes</h2></div>
+  <div class="figure">{{ATTACK}}<div class="figcap">Reference architecture, vendor neutral: every control has an AWS and a Microsoft equivalent.</div></div>
+</section>
+
+<section class="block alt">
+  <div class="sec-h"><div class="kicker">Work samples</div><h2>What a client receives</h2></div>
+  <div class="grid4">
+    <a class="card doc" href="executive-brief.html"><div class="tag">For executives</div><h3>Executive Brief</h3><p>The business risk in plain language, five questions for your team, and the decisions leadership needs to make.</p><span class="go">Read the brief →</span></a>
+    <a class="card doc" href="testing-guide.html"><div class="tag">For architects</div><h3>Testing Guide</h3><p>How each control was tested on AWS and Microsoft, with gateway policy, detection query and the test plan.</p><span class="go">Read the guide →</span></a>
+    <a class="card doc" href="configuration.html"><div class="tag">For engineers &amp; auditors</div><h3>Configuration &amp; Policy Changes</h3><p>Every IAM, gateway and guardrail change before and after, and the governance policies each one touched.</p><span class="go">See the changes →</span></a>
+    <a class="card doc" href="evidence.html"><div class="tag">For auditors</div><h3>Evidence Baseline</h3><p>Before and after assessment output, mapped to NIST SP 800-53 controls.</p><span class="go">View the evidence →</span></a>
+  </div>
+</section>
+
+<section class="block alt" id="work-with-me">
+  <div class="sec-h"><div class="kicker">Work with me</div><h2>Frank Cenedese · Rare Cyber</h2><p class="sub">26 years in cybersecurity, governance and audit. I've built security programs, led privileged access rollouts, run remediation through executive approval, and audited large organizations. Now focused on AI security and governance.</p>
+  <div class="creds"><span>CISSP</span><span>CISA</span><span>ISO/IEC 42001</span><span>NIST AI RMF</span><span>AWS · Microsoft Entra</span></div></div>
+  <div class="paths">
+    <div class="path">
+      <div class="tag">Contract &amp; subcontract roles</div>
+      <h3>GRC and AI security advisory</h3>
+      <ul><li>AI governance lead or ISO/IEC 42001 readiness</li><li>AI and cloud security risk assessments</li><li>Control design, testing and audit evidence</li><li>Identity and privileged access for agents and people</li><li>Executive and board reporting</li></ul>
+      <p class="fine">Remote across Canada, with on-site work in BC by arrangement.</p>
+    </div>
+    <div class="path">
+      <div class="tag">Rare Cyber engagements</div>
+      <h3>TRIAD assessment for AI agents</h3>
+      <ol class="mini-steps"><li><b>Discover</b> agents, connectors and the access they hold</li><li><b>Test</b> for injection, privilege misuse and audit gaps</li><li><b>Harden</b> with a prioritized, platform-specific roadmap</li><li><b>Evidence</b> pack your board, auditors and insurer can rely on</li></ol>
+    </div>
+  </div>
+  <div class="cta-row center"><a class="btn primary" href="https://rarecyber.ca">Talk to me at rarecyber.ca</a></div>
+</section>

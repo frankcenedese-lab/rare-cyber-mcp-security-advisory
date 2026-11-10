@@ -1,0 +1,134 @@
+<svg class="dg" viewBox="0 0 1040 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Attack path through an unhardened MCP deployment compared with a TRIAD hardened deployment">
+<defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#dc2626"/></marker>
+  <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#059669"/></marker>
+  <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#94a3b8"/></marker>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2h8l6 6v14H6z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v6h6M9 13h8M9 17h6" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="9.5" cy="13" r="1.4" fill="currentColor"/><circle cx="14.5" cy="13" r="1.4" fill="currentColor"/><path d="M12 3v4" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24"><path d="M3 20V9l9-5 9 5v11M7 20v-7h10v7" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 12h9M18 12v3M21 12v2" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+</defs>
+
+<!-- ============ PANEL A: UNHARDENED ============ -->
+<rect class="panel" x="10" y="10" width="1020" height="372" rx="14"/>
+<circle cx="34" cy="38" r="5" fill="#dc2626"/>
+<text class="hd" x="46" y="42">UNHARDENED · IDENTITY FLATTENING</text>
+
+<rect class="zone" x="20" y="64" width="150" height="160" rx="10"/><text class="zl" x="30" y="82">UNTRUSTED INPUT</text>
+<rect class="zone" x="340" y="64" width="160" height="160" rx="10"/><text class="zl" x="350" y="82">AGENT RUNTIME</text>
+<rect class="zone" x="720" y="64" width="306" height="216" rx="10"/><text class="zl" x="730" y="82">TOOL &amp; DATA LAYER</text>
+
+<rect class="box bad" x="30" y="108" width="130" height="96" rx="9"/>
+<use href="#i-doc" x="83" y="118" width="24" height="24" class="ic red"/>
+<text class="t1" x="95" y="164" text-anchor="middle">Poisoned content</text>
+<text class="t2" x="95" y="182" text-anchor="middle">email · ticket · doc</text>
+
+<rect class="empty" x="190" y="118" width="130" height="76" rx="9"/>
+<text class="t2" x="255" y="142" text-anchor="middle">No content inspection</text><text class="t2" x="255" y="180" text-anchor="middle">pass-through</text>
+
+<rect class="box" x="350" y="108" width="140" height="96" rx="9"/>
+<use href="#i-bot" x="408" y="118" width="24" height="24" class="ic"/>
+<text class="t1" x="420" y="164" text-anchor="middle">AI Agent</text>
+<text class="t2" x="420" y="182" text-anchor="middle">Copilot · Bedrock</text>
+
+<rect class="empty" x="530" y="118" width="160" height="76" rx="9"/>
+<text class="t2" x="610" y="142" text-anchor="middle">No gateway policy</text><text class="t2" x="610" y="180" text-anchor="middle">no scope check</text>
+
+<rect class="box" x="730" y="96" width="164" height="128" rx="9"/>
+<text class="t1" x="745" y="118">MCP Tool Server</text>
+<rect class="chip" x="742" y="130" width="140" height="22" rx="5"/><text class="t3" x="750" y="145">read · customer_lookup</text>
+<rect class="chip bad" x="742" y="158" width="140" height="22" rx="5"/><text class="t3 r" x="750" y="173">write · post_journal</text>
+<rect class="chip bad" x="742" y="186" width="140" height="22" rx="5"/><text class="t3 r" x="750" y="201">write · export_records</text>
+
+<rect class="box" x="918" y="108" width="98" height="96" rx="9"/>
+<use href="#i-db" x="955" y="118" width="24" height="24" class="ic"/>
+<text class="t1" x="967" y="164" text-anchor="middle">Finance data</text>
+<text class="t2" x="967" y="182" text-anchor="middle">ERP · CRM</text>
+
+<rect class="cred" x="730" y="236" width="286" height="32" rx="7"/>
+<use href="#i-key" x="742" y="243" width="18" height="18" class="ic red"/>
+<text class="t3 r" x="766" y="256">Shared role · every tool</text>
+
+<path class="fl red" d="M160 156 H346" marker-end="url(#ar)"/>
+<path class="fl red" d="M490 156 H726" marker-end="url(#ar)"/>
+<path class="fl red" d="M894 169 H914" marker-end="url(#ar)"/>
+<path class="fl red dash" d="M967 204 V340 H95 V208" marker-end="url(#ar)"/>
+
+<g class="step"><circle cx="255" cy="216" r="11" fill="#dc2626"/><text x="255" y="220">1</text></g>
+<text class="sl" x="255" y="244" text-anchor="middle">Instructions injected</text>
+<g class="step"><circle cx="610" cy="216" r="11" fill="#dc2626"/><text x="610" y="220">2</text></g>
+<text class="sl" x="610" y="244" text-anchor="middle">Write tool called</text>
+<g class="step"><circle cx="906" cy="92" r="11" fill="#dc2626"/><text x="906" y="96">3</text></g>
+<g class="step"><circle cx="530" cy="340" r="11" fill="#dc2626"/><text x="530" y="344">4</text></g>
+<text class="sl r" x="530" y="370" text-anchor="middle">Data exfiltrated · no trace to a user, agent or tool</text>
+
+<rect class="logbox" x="350" y="268" width="340" height="40" rx="8"/>
+<use href="#i-log" x="362" y="279" width="18" height="18" class="ic mute"/>
+<text class="t2" x="388" y="293">Generic HTTP logs only: no user or tool context</text>
+
+<!-- ============ PANEL B: HARDENED ============ -->
+<rect class="panel" x="10" y="412" width="1020" height="378" rx="14"/>
+<circle cx="34" cy="440" r="5" fill="#059669"/>
+<text class="hd" x="46" y="444">TRIAD HARDENED</text>
+
+<rect class="zone" x="20" y="466" width="150" height="160" rx="10"/><text class="zl" x="30" y="484">UNTRUSTED INPUT</text>
+<rect class="zone ctrl" x="180" y="456" width="520" height="186" rx="10"/><text class="zl g" x="190" y="474">CONTROL PLANE</text>
+<rect class="zone" x="720" y="466" width="306" height="176" rx="10"/><text class="zl" x="730" y="484">TOOL &amp; DATA LAYER</text>
+
+<rect class="box bad" x="30" y="510" width="130" height="96" rx="9"/>
+<use href="#i-doc" x="83" y="520" width="24" height="24" class="ic red"/>
+<text class="t1" x="95" y="566" text-anchor="middle">Poisoned content</text>
+<text class="t2" x="95" y="584" text-anchor="middle">email · ticket · doc</text>
+
+<rect class="box good" x="190" y="510" width="130" height="96" rx="9"/>
+<use href="#i-shield" x="243" y="520" width="24" height="24" class="ic green"/>
+<text class="t1" x="255" y="566" text-anchor="middle">Content Safety</text>
+<text class="t2" x="255" y="584" text-anchor="middle">Prompt Shields</text>
+
+<rect class="box" x="350" y="510" width="140" height="96" rx="9"/>
+<use href="#i-bot" x="408" y="520" width="24" height="24" class="ic"/>
+<text class="t1" x="420" y="566" text-anchor="middle">AI Agent</text>
+<text class="t2" x="420" y="584" text-anchor="middle">own agent identity</text>
+
+<rect class="box good" x="530" y="510" width="160" height="96" rx="9"/>
+<use href="#i-gate" x="598" y="520" width="24" height="24" class="ic green"/>
+<text class="t1" x="610" y="566" text-anchor="middle">API Gateway</text>
+<text class="t2" x="610" y="584" text-anchor="middle">validate token scope</text>
+
+<rect class="box" x="730" y="498" width="164" height="128" rx="9"/>
+<text class="t1" x="745" y="520">MCP Tool Server</text>
+<rect class="chip" x="742" y="532" width="140" height="22" rx="5"/><text class="t3" x="750" y="547">read → CustomerRead</text>
+<rect class="chip good" x="742" y="560" width="140" height="22" rx="5"/><text class="t3 g" x="750" y="575">write → FinancialWrite</text>
+<rect class="chip good" x="742" y="588" width="140" height="22" rx="5"/><text class="t3 g" x="750" y="603">write → ExportWrite</text>
+
+<rect class="box" x="918" y="510" width="98" height="96" rx="9"/>
+<use href="#i-db" x="955" y="520" width="24" height="24" class="ic"/>
+<text class="t1" x="967" y="566" text-anchor="middle">Finance data</text>
+<text class="t2" x="967" y="584" text-anchor="middle">ERP · CRM</text>
+
+<path class="fl green" d="M160 558 H186" marker-end="url(#ag)"/>
+<path class="fl green" d="M320 558 H346" marker-end="url(#ag)"/>
+<path class="fl green" d="M490 558 H526" marker-end="url(#ag)"/>
+<path class="fl green" d="M690 558 H726" marker-end="url(#ag)"/>
+<path class="fl green" d="M894 571 H914" marker-end="url(#ag)"/>
+<path class="fl red dash" d="M600 606 V660 H430 V610" marker-end="url(#ar)"/>
+
+<g class="step"><circle cx="255" cy="496" r="11" fill="#059669"/><text x="255" y="500">1</text></g>
+<g class="step"><circle cx="508" cy="534" r="11" fill="#059669"/><text x="508" y="538">2</text></g>
+<g class="step"><circle cx="708" cy="534" r="11" fill="#059669"/><text x="708" y="538">3</text></g>
+<g class="step"><circle cx="515" cy="660" r="11" fill="#dc2626"/><text x="515" y="664">✕</text></g>
+<text class="sl r" x="470" y="684" text-anchor="middle">403 Forbidden · FinancialWrite scope missing</text>
+
+<rect class="logbox ok" x="190" y="694" width="826" height="44" rx="8"/>
+<use href="#i-log" x="204" y="707" width="18" height="18" class="ic green"/>
+<text class="t1" x="232" y="714">SIEM · Sentinel / CloudTrail</text>
+<text class="t2" x="232" y="729">Every decision correlated: user principal + agent identity + tool + arguments</text>
+<path class="fl grey dash" d="M255 606 V690" marker-end="url(#ak)"/>
+<path class="fl grey dash" d="M650 606 V690" marker-end="url(#ak)"/>
+<path class="fl grey dash" d="M812 626 V690" marker-end="url(#ak)"/>
+
+<text class="lg" x="30" y="770"><tspan font-weight="700" fill="#059669">1</tspan> Untrusted content scanned before the agent sees it</text><text class="lg" x="350" y="770"><tspan font-weight="700" fill="#059669">2</tspan> Call carries a scoped agent token</text><text class="lg" x="600" y="770"><tspan font-weight="700" fill="#059669">3</tspan> Gateway verifies the role for this specific tool</text>
+</svg>

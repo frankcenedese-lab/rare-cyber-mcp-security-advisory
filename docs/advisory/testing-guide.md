@@ -1,19 +1,19 @@
-# Enterprise Architectural Guide: Securing Model Context Protocol (MCP) in Microsoft Entra ID & Azure APIM
+# Testing Guide: Validating TRIAD on AWS and Microsoft
 
 **Author:** Rare Cyber Advisory Services  
-**Target Audience:** Enterprise Security Architects, Azure Administrators, and DevSecOps Engineers  
-**Classification:** Technical Advisory Architecture Baseline  
+**For:** Security architects, cloud engineers and assessors  
+**Environments:** AWS lab build · Microsoft Entra ID and Azure API Management  
 **Last reviewed:** November 2026
 
 ---
 
-## 1. Executive Context & System Architecture
+## 1. Two Environments, One Standard
 
-While hands-on engineering labs validate least-privilege tool isolation using **AWS IAM Roles** and **API Gateway**, enterprise environments running **Microsoft 365 Copilot**, **Microsoft Copilot Studio**, **Microsoft Foundry**, or custom **Azure OpenAI** workflows require equivalent controls in the Microsoft enterprise stack.
+The TRIAD controls were first built and tested in an **AWS** lab: an AI agent calling MCP tools through Amazon API Gateway, with an IAM role per tool and Amazon Bedrock Guardrails. Most enterprise agents will run on **Microsoft** (Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry or Azure OpenAI), so every control has a Microsoft equivalent and the same tests apply to both.
 
-Without identity isolation, an MCP server integrated into Copilot Studio introduces **Identity Flattening**: every tool, whether a read-only lookup or a destructive write action, inherits the single broad identity of the Copilot agent or execution connector.
+The problem being tested is the same on either cloud. Without identity isolation, every tool an agent can call, from a read-only lookup to a destructive write, runs under one broad identity: **Identity Flattening**.
 
-### Multi-Cloud Architectural Translation Matrix
+### Control Equivalence: AWS and Microsoft
 
 ```text
 AWS HARDENED STACK                             MICROSOFT ENTERPRISE HARDENED STACK
@@ -34,7 +34,7 @@ AWS HARDENED STACK                             MICROSOFT ENTERPRISE HARDENED STA
 
 ---
 
-## 2. TRIAD Pillar Mapping to Microsoft Services
+## 2. Microsoft Implementation by TRIAD Pillar
 
 ### T: Threat Modeling & Poison Analysis
 
@@ -74,7 +74,7 @@ AWS HARDENED STACK                             MICROSOFT ENTERPRISE HARDENED STA
 
 ### D: Dual-Ecosystem Enforcement
 
-The same three tests (section 5) are run against both the AWS and Microsoft stacks. A control isn't considered in place on either platform until its test passes and the evidence is retained.
+The same three tests (section 5) are run against both the AWS and Microsoft environments. A control isn't considered in place on either platform until its test passes and the evidence is retained.
 
 ---
 
@@ -151,13 +151,29 @@ ApiManagementGatewayLogs
 
 ## 5. Validation Test Plan
 
-Each test maps to a finding in the [evidence baseline](../evidence/index.md). Microsoft results are recorded only after the test has been run in a tenant.
+Each test traces to a threat in the [Threat Model](../threat-model.md) and a finding in the [evidence baseline](../evidence/index.md) and runs the same way in both environments. Results are recorded only after a test has been run.
 
-| Test | Finding | Method | Expected result | Evidence retained |
-| :--- | :--- | :--- | :--- | :--- |
-| **TC-01** Out-of-scope tool call | FINDING-01 | Call `post_journal_entry` with a token holding only `MCPTool.CustomerRead` | `403 Scope missing` from APIM | APIM gateway log entry, token claims (redacted) |
-| **TC-02** Indirect prompt injection | FINDING-02 | Return a poisoned document from a read tool; scan it with Prompt Shields; automate variations with **PyRIT** | Attack detected; no write tool invoked | Prompt Shields response, PyRIT run log |
-| **TC-03** Identity correlation | FINDING-03 | Trigger a tool call from a named test user through Copilot Studio | Sentinel shows user, agent identity and tool name in one investigation | Sentinel query result, Purview audit record |
+| Test | Finding | What is attempted | AWS check | Microsoft check | Pass condition |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-01** Out-of-scope tool call | FINDING-01 | Call a financial write tool with an identity scoped only for reads | API Gateway IAM authorization denies the call | APIM `validate-azure-ad-token` rejects the missing role | `403`, logged with the caller identity |
+| **TC-02** Indirect prompt injection | FINDING-02 | Return a poisoned document from a read tool; automate variations with **PyRIT** | Bedrock Guardrails prompt attack filter | Prompt Shields document analysis | Attack detected; no write tool invoked |
+| **TC-03** Identity correlation | FINDING-03 | Trigger a tool call from a named test user | CloudTrail event links user, role and tool | Sentinel links user, Agent ID and tool | One query returns user, agent and tool together |
+| **TC-04** Spoofing *(planned)* | S1, S2 | Connect to an unregistered MCP server; replay an out-of-context agent token | Gateway rejects unknown backends; IAM rejects expired session | APIM blocks unregistered servers; Entra rejects the token | Both attempts refused and logged |
+| **TC-05** Denial of service *(planned)* | D1 | Drive the agent into a tool-call loop | API Gateway throttling and usage plans | APIM `rate-limit-by-key` per agent | Calls throttled; alert raised |
+| **TC-06** Tool poisoning *(planned)* | T2 | Change a tool description outside the pipeline | Pipeline hash check fails the release | Bicep deployment hash check fails | Change blocked before it reaches the agent |
+| **TC-07** Data export *(planned)* | I1 | Call the export tool with an identity holding read and write roles but not export | IAM denies the export role's actions | APIM requires `MCPTool.ExportWrite` | `403`, logged with the caller identity |
+| **TC-08** Confused deputy *(planned)* | E2 | Agent acts for a user who lacks write rights | Source identity on the role session checked against the user's entitlements | On-behalf-of token carries the user's roles; APIM checks them | `403`; the agent can't exceed the user |
+
+---
+
+## Running the Tests
+
+All eight tests are automated in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), except TC-03, which needs an analyst to run a query and attach the result. Each run writes a timestamped evidence file with a SHA-256 hash of every observation, so results can be reproduced and can't be quietly edited.
+
+```bash
+python lab/triad_tests.py --platform azure
+python lab/triad_tests.py --platform aws --only TC-01 TC-07
+```
 
 ---
 

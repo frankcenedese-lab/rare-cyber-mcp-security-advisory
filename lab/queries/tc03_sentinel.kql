@@ -1,0 +1,18 @@
+// TC-03: one view of user, agent identity and tool for a test call.
+// Joins APIM gateway logs with Entra sign-in logs for agent identities.
+// Adjust the time window to cover the test run.
+let window = 2h;
+ApiManagementGatewayLogs
+| where TimeGenerated > ago(window)
+| where ApiId has "mcp"
+| extend Tool = tostring(parse_json(BackendRequestBody).params.name)
+| project TimeGenerated, CorrelationId, CallerIpAddress, ResponseCode, Tool
+| join kind=leftouter (
+    AADServicePrincipalSignInLogs
+    | where TimeGenerated > ago(window)
+    | project SignInTime = TimeGenerated, AgentId = ServicePrincipalId, AgentName = ServicePrincipalName, IPAddress
+  ) on $left.CallerIpAddress == $right.IPAddress
+| project TimeGenerated, Tool, ResponseCode, AgentName, AgentId, CorrelationId
+| order by TimeGenerated desc
+// Expected: each test call shows the tool, the decision (200/403) and the agent identity.
+// The user principal is added by logging the token's upn/oid claim in the APIM policy (see Configuration page).

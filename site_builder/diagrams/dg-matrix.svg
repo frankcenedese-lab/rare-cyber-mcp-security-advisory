@@ -1,0 +1,42 @@
+<svg class="dg" viewBox="0 0 1040 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Control equivalence between the AWS and Microsoft hardened stacks">
+<defs>
+  <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#94a3b8"/></marker>
+</defs>
+<rect class="panel" x="10" y="10" width="1020" height="450" rx="14"/>
+<rect x="40" y="30" width="330" height="36" rx="8" fill="#d97706" opacity=".12"/><rect x="40" y="30" width="4" height="36" fill="#d97706"/>
+<text class="hd" x="56" y="53">AWS HARDENED STACK</text>
+<rect x="670" y="30" width="330" height="36" rx="8" fill="#2563eb" opacity=".12"/><rect x="670" y="30" width="4" height="36" fill="#2563eb"/>
+<text class="hd" x="686" y="53">MICROSOFT HARDENED STACK</text>
+<text class="zl" x="520" y="53" text-anchor="middle">CONTROL OBJECTIVE</text>
+
+<g class="row" transform="translate(0,84)">
+  <rect class="box" x="40" y="0" width="330" height="60" rx="9"/><text class="t1" x="58" y="27">Amazon API Gateway</text><text class="t2" x="58" y="45">SigV4 request signing</text>
+  <path class="fl grey" d="M372 30 H434" marker-end="url(#mk)"/><path class="fl grey" d="M606 30 H668" marker-end="url(#mk)"/>
+  <rect class="obj" x="438" y="12" width="164" height="36" rx="18"/><text class="t3 c" x="520" y="34" text-anchor="middle">Endpoint authentication</text>
+  <rect class="box" x="670" y="0" width="330" height="60" rx="9"/><text class="t1" x="688" y="27">Azure API Management</text><text class="t2" x="688" y="45">MCP server governance · validate-azure-ad-token</text>
+</g>
+<g class="row" transform="translate(0,158)">
+  <rect class="box" x="40" y="0" width="330" height="60" rx="9"/><text class="t1" x="58" y="27">IAM role per tool</text><text class="t2" x="58" y="45">Least-privilege policy per function</text>
+  <path class="fl grey" d="M372 30 H434" marker-end="url(#mk)"/><path class="fl grey" d="M606 30 H668" marker-end="url(#mk)"/>
+  <rect class="obj" x="438" y="12" width="164" height="36" rx="18"/><text class="t3 c" x="520" y="34" text-anchor="middle">Least privilege</text>
+  <rect class="box" x="670" y="0" width="330" height="60" rx="9"/><text class="t1" x="688" y="27">Entra Agent ID + app roles</text><text class="t2" x="688" y="45">One identity per agent · one role per tool</text>
+</g>
+<g class="row" transform="translate(0,232)">
+  <rect class="box" x="40" y="0" width="330" height="60" rx="9"/><text class="t1" x="58" y="27">Bedrock Guardrails</text><text class="t2" x="58" y="45">Prompt attack filtering</text>
+  <path class="fl grey" d="M372 30 H434" marker-end="url(#mk)"/><path class="fl grey" d="M606 30 H668" marker-end="url(#mk)"/>
+  <rect class="obj" x="438" y="12" width="164" height="36" rx="18"/><text class="t3 c" x="520" y="34" text-anchor="middle">Prompt injection defence</text>
+  <rect class="box" x="670" y="0" width="330" height="60" rx="9"/><text class="t1" x="688" y="27">Azure AI Content Safety</text><text class="t2" x="688" y="45">Prompt Shields · direct and indirect attacks</text>
+</g>
+<g class="row" transform="translate(0,306)">
+  <rect class="box" x="40" y="0" width="330" height="60" rx="9"/><text class="t1" x="58" y="27">AWS WAF · Amazon Macie</text><text class="t2" x="58" y="45">Request filtering · sensitive data discovery</text>
+  <path class="fl grey" d="M372 30 H434" marker-end="url(#mk)"/><path class="fl grey" d="M606 30 H668" marker-end="url(#mk)"/>
+  <rect class="obj" x="438" y="12" width="164" height="36" rx="18"/><text class="t3 c" x="520" y="34" text-anchor="middle">Egress &amp; data protection</text>
+  <rect class="box" x="670" y="0" width="330" height="60" rx="9"/><text class="t1" x="688" y="27">Power Platform DLP · Purview</text><text class="t2" x="688" y="45">Connector policy · data classification</text>
+</g>
+<g class="row" transform="translate(0,380)">
+  <rect class="box" x="40" y="0" width="330" height="60" rx="9"/><text class="t1" x="58" y="27">CloudWatch · CloudTrail</text><text class="t2" x="58" y="45">API activity and metrics</text>
+  <path class="fl grey" d="M372 30 H434" marker-end="url(#mk)"/><path class="fl grey" d="M606 30 H668" marker-end="url(#mk)"/>
+  <rect class="obj" x="438" y="12" width="164" height="36" rx="18"/><text class="t3 c" x="520" y="34" text-anchor="middle">Audit &amp; correlation</text>
+  <rect class="box" x="670" y="0" width="330" height="60" rx="9"/><text class="t1" x="688" y="27">Azure Monitor · Sentinel · Defender XDR</text><text class="t2" x="688" y="45">Gateway, identity and Copilot audit in one place</text>
+</g>
+</svg>

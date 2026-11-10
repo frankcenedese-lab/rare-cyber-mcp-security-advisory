@@ -1,0 +1,82 @@
+<svg class="dg" viewBox="0 0 1040 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lab architecture with STRIDE threats placed on trust boundaries">
+<defs>
+  <marker id="sk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#64748b"/></marker>
+  <marker id="sl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#94a3b8"/></marker>
+</defs>
+<rect class="panel" x="10" y="10" width="1020" height="420" rx="14"/>
+
+<!-- trust boundaries -->
+<g class="tb">
+  <line x1="180" y1="28" x2="180" y2="300"/><text x="186" y="38">TB1</text>
+  <line x1="380" y1="28" x2="380" y2="300"/><text x="386" y="38">TB2</text>
+  <line x1="600" y1="28" x2="600" y2="300"/><text x="606" y="38">TB3</text>
+  <line x1="812" y1="28" x2="812" y2="300"/><text x="818" y="38">TB4</text>
+  <line x1="612" y1="128" x2="792" y2="128"/><text x="756" y="122">TB5</text>
+</g>
+
+<!-- components -->
+<rect class="box bad" x="30" y="170" width="130" height="80" rx="9"/>
+<text class="t1" x="95" y="205" text-anchor="middle">External content</text><text class="t2" x="95" y="223" text-anchor="middle">untrusted</text>
+
+<rect class="box" x="200" y="50" width="140" height="56" rx="9"/>
+<text class="t1" x="270" y="76" text-anchor="middle">User</text><text class="t2" x="270" y="93" text-anchor="middle">starts the session</text>
+
+<rect class="box" x="200" y="170" width="160" height="80" rx="9"/>
+<text class="t1" x="280" y="205" text-anchor="middle">AI Agent</text><text class="t2" x="280" y="223" text-anchor="middle">MCP client</text>
+
+<rect class="box good" x="400" y="50" width="180" height="56" rx="9"/>
+<text class="t1" x="490" y="76" text-anchor="middle">Identity provider</text><text class="t2" x="490" y="93" text-anchor="middle">IAM · Entra Agent ID</text>
+
+<rect class="box good" x="400" y="170" width="180" height="80" rx="9"/>
+<text class="t1" x="490" y="205" text-anchor="middle">API Gateway</text><text class="t2" x="490" y="223" text-anchor="middle">API Gateway · APIM</text>
+
+<rect class="box" x="620" y="50" width="170" height="56" rx="9"/>
+<text class="t1" x="705" y="76" text-anchor="middle">Tool registry</text><text class="t2" x="705" y="93" text-anchor="middle">Git · API Center</text>
+
+<rect class="box" x="620" y="160" width="170" height="100" rx="9"/>
+<text class="t1" x="705" y="184" text-anchor="middle">MCP Tool Server</text>
+<rect class="chip" x="634" y="194" width="142" height="18" rx="4"/><text class="t3" x="642" y="207">read tools</text>
+<rect class="chip bad" x="634" y="216" width="142" height="18" rx="4"/><text class="t3 r" x="642" y="229">financial write</text>
+<rect class="chip bad" x="634" y="238" width="142" height="16" rx="4"/><text class="t3 r" x="642" y="250">data export</text>
+
+<rect class="box" x="832" y="170" width="180" height="80" rx="9"/>
+<text class="t1" x="922" y="205" text-anchor="middle">Business data</text><text class="t2" x="922" y="223" text-anchor="middle">finance · customer records</text>
+
+<rect class="logbox ok" x="200" y="324" width="812" height="42" rx="8"/>
+<text class="t1" x="226" y="343">Audit logging</text><text class="t2" x="226" y="358">CloudTrail · Sentinel · Purview</text>
+
+<!-- flows -->
+<path class="fl kk" d="M160 210 H196" marker-end="url(#sk)"/>
+<path class="fl kk" d="M270 106 V166" marker-end="url(#sk)"/>
+<path class="fl kk" d="M360 210 H396" marker-end="url(#sk)"/>
+<path class="fl kk" d="M490 106 V166" marker-end="url(#sk)"/>
+<path class="fl kk" d="M580 210 H616" marker-end="url(#sk)"/>
+<path class="fl kk" d="M705 106 V156" marker-end="url(#sk)"/>
+<path class="fl kk" d="M790 210 H828" marker-end="url(#sk)"/>
+<path class="fl grey dash" d="M280 250 V320" marker-end="url(#sl)"/>
+<path class="fl grey dash" d="M490 250 V320" marker-end="url(#sl)"/>
+<path class="fl grey dash" d="M705 260 V320" marker-end="url(#sl)"/>
+
+<!-- threat badges -->
+<g class="bdg"><circle cx="180" cy="180" r="14" fill="#ea580c"/><text x="180" y="184">T1</text></g>
+<g class="bdg"><circle cx="180" cy="250" r="14" fill="#0d9488"/><text x="180" y="254">I2</text></g>
+<g class="bdg"><circle cx="380" cy="180" r="14" fill="#7c3aed"/><text x="380" y="184">S2</text></g>
+<g class="bdg"><circle cx="380" cy="244" r="14" fill="#dc2626"/><text x="380" y="248">E2</text></g>
+<g class="bdg"><circle cx="572" cy="168" r="14" fill="#ca8a04"/><text x="572" y="172">D1</text></g>
+<g class="bdg"><circle cx="600" cy="240" r="14" fill="#7c3aed"/><text x="600" y="244">S1</text></g>
+<g class="bdg"><circle cx="705" cy="128" r="14" fill="#ea580c"/><text x="705" y="132">T2</text></g>
+<g class="bdg"><circle cx="784" cy="160" r="14" fill="#dc2626"/><text x="784" y="164">E1</text></g>
+<g class="bdg"><circle cx="812" cy="250" r="14" fill="#0d9488"/><text x="812" y="254">I1</text></g>
+<g class="bdg"><circle cx="1000" cy="324" r="14" fill="#2563eb"/><text x="1000" y="328">R1</text></g>
+
+<!-- legend -->
+<g class="lgd" transform="translate(30,400)">
+  <circle cx="6" cy="0" r="6" fill="#7c3aed"/><text x="18" y="4">Spoofing</text>
+  <circle cx="106" cy="0" r="6" fill="#ea580c"/><text x="118" y="4">Tampering</text>
+  <circle cx="216" cy="0" r="6" fill="#2563eb"/><text x="228" y="4">Repudiation</text>
+  <circle cx="330" cy="0" r="6" fill="#0d9488"/><text x="342" y="4">Information disclosure</text>
+  <circle cx="500" cy="0" r="6" fill="#ca8a04"/><text x="512" y="4">Denial of service</text>
+  <circle cx="634" cy="0" r="6" fill="#dc2626"/><text x="646" y="4">Elevation of privilege</text>
+  <line x1="800" y1="0" x2="826" y2="0" class="tbl"/><text x="834" y="4">Trust boundary</text>
+</g>
+</svg>
