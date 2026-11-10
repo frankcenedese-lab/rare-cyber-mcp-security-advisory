@@ -1,0 +1,66 @@
+site_name: Rare Cyber MCP Security Advisory
+site_description: TRIAD Framework for securing Model Context Protocol (MCP) deployments across AWS and Microsoft.
+site_author: Rare Cyber Advisory Services
+site_url: https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/
+repo_url: https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory
+repo_name: rare-cyber-mcp-security-advisory
+edit_uri: edit/main/docs/
+
+nav:
+  - Home: index.md
+  - CISO Executive Brief: advisory/executive-brief.md
+  - Microsoft Architecture Guide: advisory/azure-copilot-mapping.md
+  - Evidence Baseline: evidence/index.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    logo: material/shield-lock-outline
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/frankcenedese-lab
+
+copyright: Copyright &copy; 2026 Rare Cyber Advisory Services

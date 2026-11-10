@@ -42,6 +42,7 @@ sequenceDiagram
     else Valid Scope & Schema Sanitized
         Gateway->>MCP: Proxy Authorized Request
     end
+```
 
 1. **Identity Flattening & Over-Privileged Tool Access:** Single shared IAM roles or service principals allow low-risk tools to be leveraged for administrative manipulation.
 2. **Indirect Prompt Injection & Tool Hijacking:** Unsanitized external inputs (emails, tickets, docs) trick the LLM into invoking unapproved tool calls.

@@ -13,14 +13,48 @@ This repository serves as the official advisory baseline and proof-of-concept re
 
 ---
 
+## 🌐 Read the Advisory Online
+
+**[frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory](https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/)**
+
+| Document | Audience |
+| :--- | :--- |
+| [CISO Executive Brief](docs/advisory/executive-brief.md) | Security leadership |
+| [Microsoft Architecture Guide](docs/advisory/azure-copilot-mapping.md) | Architects, Azure admins, DevSecOps |
+| [Evidence Baseline](docs/evidence/index.md) | Auditors, assessors |
+
+---
+
 ## Repository Structure
 
 ```text
 .
-├── advisory/
-│   ├── executive-brief.md          # CISO Executive Advisory Brief & Business Context
-│   └── azure-copilot-mapping.md    # Multi-Cloud Architectural Translation (AWS ➔ Entra ID/APIM)
-├── evidence/
-│   ├── scan-vulnerable.json        # Pre-hardening vulnerability audit baseline
-│   └── scan-hardened.json          # Post-hardening compliance validation telemetry
-└── README.md                       # Master Repository Architecture
+├── docs/
+│   ├── index.md                        # Site home page
+│   ├── advisory/
+│   │   ├── executive-brief.md          # CISO Executive Advisory Brief & Business Context
+│   │   └── azure-copilot-mapping.md    # Microsoft Architecture Guide (Entra Agent ID, APIM, Prompt Shields, Sentinel)
+│   └── evidence/
+│       ├── index.md                    # Evidence baseline summary
+│       ├── scan-vulnerable.json        # Pre-hardening assessment output (sample)
+│       └── scan-hardened.json          # Post-hardening assessment output (sample)
+├── .github/workflows/deploy-pages.yml  # Publishes the site to GitHub Pages on every push to main
+├── mkdocs.yml                          # Site configuration
+├── requirements.txt                    # Site build dependency
+└── README.md                           # This file
+```
+
+---
+
+## Preview the Site Locally
+
+```bash
+pip install -r requirements.txt
+mkdocs serve
+```
+
+Then open http://127.0.0.1:8000.
+
+---
+
+*Rare Cyber Advisory Services: Establishing Trust in Enterprise AI Infrastructure.*
