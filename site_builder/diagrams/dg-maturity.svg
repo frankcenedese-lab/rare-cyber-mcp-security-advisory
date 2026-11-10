@@ -1,0 +1,23 @@
+<svg class="dg" viewBox="0 0 1040 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent identity maturity: the lab is at level 2 and designed to level 5">
+<rect class="panel" x="10" y="10" width="1020" height="340" rx="14"/>
+<text class="hd" x="30" y="40">AGENT IDENTITY MATURITY</text>
+<line class="base" x1="30" y1="300" x2="1010" y2="300"/>
+
+<g><rect class="lvl" x="30" y="236" width="184" height="64" rx="8"/>
+<text class="lv-n" x="44" y="258">LEVEL 1</text><text class="t1" x="44" y="278">Shared credential</text><text class="t2" x="44" y="293">one identity, all tools</text></g>
+
+<g><rect class="lvl done" x="226" y="196" width="184" height="104" rx="8"/>
+<text class="lv-n" x="240" y="218">LEVEL 2</text><text class="t1" x="240" y="238">Per-tool identity</text><text class="t2" x="240" y="256">a role per tool,</text><text class="t2" x="240" y="271">checked at the gateway</text></g>
+
+<g><rect class="lvl next" x="422" y="156" width="184" height="144" rx="8"/>
+<text class="lv-n" x="436" y="178">LEVEL 3</text><text class="t1" x="436" y="198">Delegated and</text><text class="t1" x="436" y="215">audience-bound</text><text class="t2" x="436" y="234">user + agent in the token</text><text class="t2" x="436" y="249">one audience per token</text><text class="t2" x="436" y="264">no passthrough</text></g>
+
+<g><rect class="lvl next" x="618" y="116" width="184" height="184" rx="8"/>
+<text class="lv-n" x="632" y="138">LEVEL 4</text><text class="t1" x="632" y="158">Least privilege in</text><text class="t1" x="632" y="175">scope and time</text><text class="t2" x="632" y="194">parameter-level policy</text><text class="t2" x="632" y="209">separation of duties</text><text class="t2" x="632" y="224">just-in-time + approval</text><text class="t2" x="632" y="239">sender-constrained tokens</text></g>
+
+<g><rect class="lvl next" x="814" y="76" width="196" height="224" rx="8"/>
+<text class="lv-n" x="828" y="98">LEVEL 5</text><text class="t1" x="828" y="118">Governed</text><text class="t2" x="828" y="137">owner and sponsor</text><text class="t2" x="828" y="152">access reviews</text><text class="t2" x="828" y="167">orphan detection</text><text class="t2" x="828" y="182">measured revocation</text><text class="t2" x="828" y="197">behavioural detection</text></g>
+
+<g class="mk"><path d="M318 186 l-7 -12 h14 z" fill="#14b8a6"/><text x="318" y="166" text-anchor="middle">LAB TODAY</text></g>
+<text class="lg" x="30" y="326">Solid: implemented and tested. Dashed: designed, with tests defined in the harness (TC-08 to TC-13).</text>
+</svg>

@@ -73,7 +73,7 @@ AWS HARDENED STACK                             MICROSOFT ENTERPRISE HARDENED STA
 
 ### D: Dual-Ecosystem Enforcement
 
-The same three tests (section 5) are run against both the AWS and Microsoft environments. A control isn't considered in place on either platform until its test passes and the evidence is retained.
+The same tests (section 5) are run against both the AWS and Microsoft environments. A control isn't considered in place on either platform until its test passes and the evidence is retained.
 
 ---
 
@@ -162,12 +162,17 @@ Each test traces to a threat in the [Threat Model](../threat-model.md) and a fin
 | **TC-06** Tool poisoning *(planned)* | T2 | Change a tool description outside the pipeline | Pipeline hash check fails the release | Bicep deployment hash check fails | Change blocked before it reaches the agent |
 | **TC-07** Data export *(planned)* | I1 | Call the export tool with an identity holding read and write roles but not export | IAM denies the export role's actions | APIM requires `MCPTool.ExportWrite` | `403`, logged with the caller identity |
 | **TC-08** Confused deputy *(planned)* | E2 | Agent acts for a user who lacks write rights | Source identity on the role session checked against the user's entitlements | On-behalf-of token carries the user's roles; APIM checks them | `403`; the agent can't exceed the user |
+| **TC-09** Audience binding *(planned)* | S3 | Present a token issued for a different MCP server | Gateway and server check `aud` against their own resource | APIM `validate-azure-ad-token` audience check; server validates `aud` | `401`/`403`; downstream calls use the server's own token |
+| **TC-10** Parameter policy *(planned)* | E3 | Post a journal entry over the agent limit, then one within it | Amazon Verified Permissions (Cedar) policy on `amount` | APIM `choose` policy on `amount` | Over limit refused; within limit allowed |
+| **TC-11** Separation of duties | E4 | Add a conflicting role to an agent's assignments | `lab/sod_check.py` in CI | Same check, plus Entra ID Governance separation of duties on access packages | Conflict detected; assignment rejected |
+| **TC-12** Just-in-time elevation *(planned)* | E5 | Call the payment tool with a standing token, then an approved elevated token | Short-session role assumed after approval | Approved, time-bound role assignment | Standing refused; elevated allowed until expiry |
+| **TC-13** Revocation time *(planned)* | E6 | Disable the agent while it is calling tools | Revoke active sessions on the role | Disable the agent identity | Cut off within 300 seconds; time recorded |
 
 ---
 
 ## Running the Tests
 
-All eight tests are automated in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), except TC-03, which needs an analyst to run a query and attach the result. Each run writes a timestamped evidence file with a SHA-256 hash of every observation, so results can be reproduced and can't be quietly edited.
+All thirteen tests are automated in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), except TC-03, which needs an analyst to run a query and attach the result, and TC-13, which asks the operator to disable the agent mid-test. Each run writes a timestamped evidence file with a SHA-256 hash of every observation, so results can be reproduced and can't be quietly edited.
 
 ```bash
 python lab/triad_tests.py --platform azure

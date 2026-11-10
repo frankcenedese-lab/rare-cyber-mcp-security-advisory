@@ -68,6 +68,11 @@
 <g class="bdg"><circle cx="784" cy="160" r="14" fill="#dc2626"/><text x="784" y="164">E1</text></g>
 <g class="bdg"><circle cx="812" cy="250" r="14" fill="#0d9488"/><text x="812" y="254">I1</text></g>
 <g class="bdg"><circle cx="1000" cy="324" r="14" fill="#2563eb"/><text x="1000" y="328">R1</text></g>
+<g class="bdg"><circle cx="600" cy="292" r="14" fill="#7c3aed"/><text x="600" y="296">S3</text></g>
+<g class="bdg"><circle cx="650" cy="266" r="14" fill="#dc2626"/><text x="650" y="270">E3</text></g>
+<g class="bdg"><circle cx="760" cy="266" r="14" fill="#dc2626"/><text x="760" y="270">E4</text></g>
+<g class="bdg"><circle cx="400" cy="56" r="14" fill="#dc2626"/><text x="400" y="60">E5</text></g>
+<g class="bdg"><circle cx="580" cy="56" r="14" fill="#dc2626"/><text x="580" y="60">E6</text></g>
 
 <!-- legend -->
 <g class="lgd" transform="translate(30,400)">

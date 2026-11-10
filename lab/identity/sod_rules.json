@@ -1,0 +1,15 @@
+{
+  "conflicts": [
+    {
+      "id": "SOD-01",
+      "roles": ["MCPTool.FinancialWrite", "MCPTool.FinancialApprove"],
+      "reason": "One agent could post and approve its own journal entries"
+    },
+    {
+      "id": "SOD-02",
+      "roles": ["MCPTool.VendorBankUpdate", "MCPTool.PaymentRelease"],
+      "reason": "One agent could redirect a vendor's bank details and pay them"
+    }
+  ],
+  "required_fields": ["owner"]
+}

@@ -1,6 +1,6 @@
 # TRIAD Lab Test Harness
 
-Repeatable tests for the eight TRIAD test cases, on AWS or Microsoft. Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
+Repeatable tests for the thirteen TRIAD test cases, on AWS or Microsoft. Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
 
 > Only run these tests against environments you own or are authorized to test.
 
@@ -31,6 +31,11 @@ python lab/triad_tests.py --platform aws --only TC-01 TC-07
 | TC-06 | T2 | A changed tool definition fails the hash check | Automated, offline |
 | TC-07 | I1 | Export needs its own role | Automated |
 | TC-08 | E2 | Agent can't exceed the calling user's rights | Automated |
+| TC-09 | S3 | Token for another MCP server is refused | Automated |
+| TC-10 | E3 | Call over the agent's parameter limit is refused | Automated |
+| TC-11 | E4 | Conflicting roles on one agent are detected | Automated, offline (`lab/sod_check.py`) |
+| TC-12 | E5 | High-risk tool needs just-in-time elevation | Automated |
+| TC-13 | E6 | Disabled agent is cut off within the target time | Interactive: you disable the agent when prompted |
 
 Statuses: `PASS`, `FAIL`, `MANUAL` (needs an analyst to attach evidence), `SKIPPED` (setting missing), `ERROR` (harness problem, recorded rather than hidden).
 

@@ -14,6 +14,11 @@ Results from the lab, reported only for tests that have been run. Baseline and h
 | TC-06 Tool poisoning | T2 | PASS | PASS | Platform independent: hash check run in the repository harness and CI, 2026-11-10 |
 | TC-07 Data export | I1 | PLANNED | PLANNED | Defined in v1.1 |
 | TC-08 Confused deputy | E2 | PLANNED | PLANNED | Defined in v1.1 |
+| TC-09 Audience binding | S3 | PLANNED | PLANNED | Defined in v1.2 |
+| TC-10 Parameter policy | E3 | PLANNED | PLANNED | Defined in v1.2 |
+| TC-11 Separation of duties | E4 | PASS | PASS | Platform independent: role assignment check run in the repository harness and CI, 2026-11-10 |
+| TC-12 Just-in-time elevation | E5 | PLANNED | PLANNED | Defined in v1.2 |
+| TC-13 Revocation time | E6 | PLANNED | PLANNED | Defined in v1.2 |
 
 Harness output for each run is committed under `docs/evidence/runs/` and listed here with its date.
 

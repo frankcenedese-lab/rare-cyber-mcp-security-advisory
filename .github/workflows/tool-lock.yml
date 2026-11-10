@@ -1,10 +1,10 @@
-name: Verify MCP tool definitions (TRIAD TC-06)
+name: Verify tool definitions and agent duties (TC-06, TC-11)
 
 on:
   push:
-    paths: ["lab/tools/**", "lab/tool_lock.py"]
+    paths: ["lab/tools/**", "lab/identity/**", "lab/tool_lock.py", "lab/sod_check.py"]
   pull_request:
-    paths: ["lab/tools/**", "lab/tool_lock.py"]
+    paths: ["lab/tools/**", "lab/identity/**", "lab/tool_lock.py", "lab/sod_check.py"]
 
 permissions:
   contents: read
@@ -18,3 +18,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: python lab/tool_lock.py verify
+      - run: python lab/sod_check.py

@@ -1,6 +1,6 @@
 <section class="hero report">
   <div class="hero-in">
-    <div class="eyebrow">Technical report · Version 1.1 · November 2026</div>
+    <div class="eyebrow">Technical report · Version 1.2 · November 2026</div>
     <h1>Securing AI Agents with Privileged Tool Access: <span>a threat-modelled lab on AWS and Microsoft</span></h1>
     <p class="byline">Frank Cenedese, CISSP, CISA</p>
     <div class="cta-row">
@@ -11,9 +11,9 @@
 </section>
 
 <section class="strip">
-  <div><b>10</b><span>threats modelled with STRIDE</span></div>
-  <div><b>5</b><span>trust boundaries</span></div>
-  <div><b>8</b><span>test cases, pass conditions set in advance</span></div>
+  <div><b>15</b><span>threats modelled with STRIDE</span></div>
+  <div><b>4</b><span>identities separated per tool call</span></div>
+  <div><b>13</b><span>test cases, pass conditions set in advance</span></div>
   <div><b>2</b><span>platforms: AWS and Microsoft</span></div>
 </section>
 
@@ -21,7 +21,7 @@
   <div class="report-body">
     <h2 id="abstract">Abstract</h2>
     <p>AI agents connected to business systems through the Model Context Protocol (MCP) commonly run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person. This report describes a lab built to examine those risks. An agent with read, financial write and export tools was deployed on AWS with default settings, assessed, hardened with five controls (the TRIAD framework), and re-assessed. Every control is mapped to its Microsoft equivalent.</p>
-    <p>The baseline failed three controls: least privilege (NIST SP 800-53 AC-6), input validation (SI-10) and audit generation (AU-12). All three passed after hardening. A subsequent STRIDE threat model identified ten threats across five trust boundaries, including two that the original tests only partly covered: excessive data export and the confused deputy problem. The report documents each configuration and policy change before and after, defines eight test cases with an automated harness that records hashed evidence, and states its limitations.</p>
+    <p>The baseline failed three controls: least privilege (NIST SP 800-53 AC-6), input validation (SI-10) and audit generation (AU-12). All three passed after hardening. A subsequent STRIDE threat model identified fifteen threats across five trust boundaries, including two that the original tests only partly covered: excessive data export and the confused deputy problem. An identity analysis separates the four identities in each tool call (user, agent, MCP server and downstream API) and places the lab on a five-level agent identity maturity model. The report documents each configuration and policy change before and after, defines thirteen test cases with an automated harness that records hashed evidence, and states its limitations.</p>
 
     <h2 id="findings">Key findings</h2>
     <ol class="findings">
@@ -29,7 +29,8 @@
       <li><b>Checking the agent isn't enough.</b> The gateway must also check the rights of the person the agent acts for, or the agent becomes a confused deputy.</li>
       <li><b>Export is its own privilege.</b> Read and write rights shouldn't imply the right to extract data in bulk.</li>
       <li><b>Attribution needs design.</b> Default logs show an API call, not the user, agent and tool together. Carrying the user's identity into every call fixed this.</li>
-      <li><b>Testing without a threat model overstates coverage.</b> Before the model, three tests appeared to cover the lab; afterwards, they fully covered three of ten threats.</li>
+      <li><b>Per-tool roles are only level 2 of 5.</b> Expert-grade agent identity needs delegation with audience-bound tokens, parameter-level policy, separation of duties, just-in-time elevation and measured revocation.</li>
+      <li><b>Testing without a threat model overstates coverage.</b> Before the model, three tests appeared to cover the lab; afterwards, they fully covered three of the ten threats in the first model.</li>
     </ol>
   </div>
 </section>
@@ -47,11 +48,12 @@
     <h2 id="contents">Contents</h2>
     <div class="toc-grid">
       <a class="card doc" href="method.html"><div class="tag">Section 1</div><h3>Method and Environment</h3><p>What was built, how it was attacked, and the TRIAD controls applied.</p></a>
-      <a class="card doc" href="threat-model.html"><div class="tag">Section 2</div><h3>Threat Model</h3><p>STRIDE analysis: ten threats, five trust boundaries, each traced to a control and a test.</p></a>
-      <a class="card doc" href="configuration.html"><div class="tag">Section 3</div><h3>Configuration and Policy Changes</h3><p>Six configuration changes before and after, and the eight governance policies they affect.</p></a>
-      <a class="card doc" href="testing-guide.html"><div class="tag">Section 4</div><h3>Testing Guide</h3><p>Eight test cases on AWS and Microsoft, with methods and pass conditions.</p></a>
-      <a class="card doc" href="results.html"><div class="tag">Section 5</div><h3>Results and Evidence</h3><p>Findings, the test run log and the evidence standard.</p></a>
-      <a class="card doc" href="limitations.html"><div class="tag">Section 6</div><h3>Scope, Limitations and Change Log</h3><p>What the lab covers, what it doesn't, and what this report doesn't claim.</p></a>
+      <a class="card doc" href="threat-model.html"><div class="tag">Section 2</div><h3>Threat Model</h3><p>STRIDE analysis: fifteen threats across five trust boundaries, each traced to a control and a test.</p></a>
+      <a class="card doc" href="identity.html"><div class="tag">Section 3</div><h3>Identity Architecture</h3><p>Four identities, the token at each hop, and a five-level agent identity maturity model.</p></a>
+      <a class="card doc" href="configuration.html"><div class="tag">Section 4</div><h3>Configuration and Policy Changes</h3><p>Six configuration changes before and after, and the eight governance policies they affect.</p></a>
+      <a class="card doc" href="testing-guide.html"><div class="tag">Section 5</div><h3>Testing Guide</h3><p>Thirteen test cases on AWS and Microsoft, with methods and pass conditions.</p></a>
+      <a class="card doc" href="results.html"><div class="tag">Section 6</div><h3>Results and Evidence</h3><p>Findings, the test run log and the evidence standard.</p></a>
+      <a class="card doc" href="limitations.html"><div class="tag">Section 7</div><h3>Scope, Limitations and Change Log</h3><p>What the lab covers, what it doesn't, and what this report doesn't claim.</p></a>
       <a class="card doc" href="executive-summary.html"><div class="tag">Appendix</div><h3>Executive Summary</h3><p>The findings restated for decision-makers.</p></a>
     </div>
   </div>

@@ -47,8 +47,13 @@ Every test in this lab exists because the threat model said it should. That is t
 | **D1** | Denial of service | Agent loops on tool calls, exhausting quotas or budget | Medium | Gateway rate limits and quotas per agent | TC-05 | PLANNED |
 | **E1** | Elevation of privilege | All tools share one role, so a read task can perform writes (Identity Flattening) | Critical | **R** One scoped identity per tool | TC-01 | TESTED |
 | **E2** | Elevation of privilege | Confused deputy: agent uses its own broad rights on an attacker's behalf | High | **R** Gateway checks the user's context, not just the agent's | TC-08 | PLANNED |
+| **S3** | Spoofing | A token issued for one MCP server is accepted by another, or forwarded downstream | High | **R** Audience-bound tokens; no passthrough | TC-09 | PLANNED |
+| **E3** | Elevation of privilege | Agent uses an allowed tool beyond intended limits (amount, records, scope) | High | **R** Parameter-level policy per call | TC-10 | PLANNED |
+| **E4** | Elevation of privilege | One agent holds conflicting duties, such as posting and approving | High | **R** Separation of duties rules on role assignment | TC-11 | TESTED |
+| **E5** | Elevation of privilege | Standing privilege on high-risk tools | High | **R** Just-in-time elevation with human approval | TC-12 | PLANNED |
+| **E6** | Elevation of privilege | A compromised agent keeps access after it is disabled | High | **A** Measured revocation; short token lifetimes | TC-13 | PLANNED |
 
-Risk ratings are initial, set before testing, and are revisited as each test produces evidence.
+Risk ratings are initial, set before testing, and are revisited as each test produces evidence. Threats S3 and E3 to E6 were added in version 1.2 from the [Identity Architecture](identity-architecture.md) analysis.
 
 ---
 
@@ -84,5 +89,6 @@ Every test is automated in the [lab test harness](https://github.com/frankcenede
 | **TC-06** Tool poisoning | T2 | Change a tool description outside the pipeline and confirm the hash check blocks deployment |
 | **TC-07** Data export | I1 | Call the export tool with an identity that holds read and write roles but not export |
 | **TC-08** Confused deputy | E2 | Have the agent act for a user who lacks write rights, and confirm the gateway refuses |
+| **TC-09** to **TC-13** | S3, E3 to E6 | Audience binding, parameter policy, separation of duties, just-in-time elevation and revocation time; see [Identity Architecture](identity-architecture.md#new-tests-from-this-section) |
 
 Full methods for every test, on both platforms, are in the [Testing Guide](advisory/testing-guide.md#5-validation-test-plan).

@@ -6,8 +6,15 @@
       "required_role": "MCPTool.CustomerRead",
       "inputSchema": {
         "type": "object",
-        "properties": {"customer_id": {"type": "string", "pattern": "^C[0-9]{6}$"}},
-        "required": ["customer_id"],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "pattern": "^C[0-9]{6}$"
+          }
+        },
+        "required": [
+          "customer_id"
+        ],
         "additionalProperties": false
       }
     },
@@ -18,10 +25,20 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "amount": {"type": "number", "minimum": 0.01, "maximum": 10000},
-          "memo": {"type": "string", "maxLength": 200}
+          "amount": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 10000
+          },
+          "memo": {
+            "type": "string",
+            "maxLength": 200
+          }
         },
-        "required": ["amount", "memo"],
+        "required": [
+          "amount",
+          "memo"
+        ],
         "additionalProperties": false
       }
     },
@@ -31,8 +48,36 @@
       "required_role": "MCPTool.ExportWrite",
       "inputSchema": {
         "type": "object",
-        "properties": {"scope": {"type": "string", "enum": ["segment_a", "segment_b"]}},
-        "required": ["scope"],
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "segment_a",
+              "segment_b"
+            ]
+          }
+        },
+        "required": [
+          "scope"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approve_journal_entry",
+      "description": "Approve a posted journal entry. Requires controller approval rights.",
+      "required_role": "MCPTool.FinancialApprove",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entry_id": {
+            "type": "string",
+            "pattern": "^JE[0-9]{8}$"
+          }
+        },
+        "required": [
+          "entry_id"
+        ],
         "additionalProperties": false
       }
     }

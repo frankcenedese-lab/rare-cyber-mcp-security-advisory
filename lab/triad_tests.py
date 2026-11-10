@@ -12,6 +12,7 @@ Usage:
     cp lab/config.example.env lab/.env      # fill in your lab values
     python lab/triad_tests.py --platform azure            # all tests
     python lab/triad_tests.py --platform aws --only TC-01 TC-05
+    python lab/triad_tests.py --platform azure --only TC-13   # interactive: you disable the agent
 
 Only run this against environments you own or are authorized to test.
 """
@@ -46,6 +47,11 @@ CATALOG = {
     "TC-06": ("T2", "CM-3, SI-7", "Tampered tool definition is detected"),
     "TC-07": ("I1", "AC-6, AC-21", "Data export requires its own role"),
     "TC-08": ("E2", "AC-6(10)", "Agent can't exceed the calling user's rights"),
+    "TC-09": ("S3", "IA-9, SC-23", "Token for another MCP server is refused"),
+    "TC-10": ("E3", "AC-3, AC-6", "Call beyond the agent's parameter limit is refused"),
+    "TC-11": ("E4", "AC-5", "Conflicting roles on one agent are detected"),
+    "TC-12": ("E5", "AC-2(6), AC-6(5)", "High-risk tool needs just-in-time elevation"),
+    "TC-13": ("E6", "AC-2(3), IR-4", "Disabled agent is cut off within the target time"),
 }
 
 
@@ -204,8 +210,79 @@ def tc08(_: str) -> dict:
                   "401/403: the agent acting for a user without write rights can't write", observe(resp))
 
 
+def tc09(_: str) -> dict:
+    resp = mcp_call(env("READ_TOOL"), env("OTHER_AUDIENCE_TOKEN"))
+    return result("TC-09", "PASS" if denied(resp) else "FAIL",
+                  "401/403: a token issued for a different MCP server (audience) is refused", observe(resp),
+                  "Also confirm in MCP server logs that downstream calls use the server's own token, never the agent's.")
+
+
+def tc10(_: str) -> dict:
+    over = mcp_call(env("WRITE_TOOL"), env("READ_WRITE_TOKEN"),
+                    {"amount": float(env("OVER_LIMIT_AMOUNT", required=False) or 9999), "memo": "TRIAD TC-10 over"})
+    within = mcp_call(env("WRITE_TOOL"), env("READ_WRITE_TOKEN"),
+                      {"amount": float(env("WITHIN_LIMIT_AMOUNT", required=False) or 50), "memo": "TRIAD TC-10 within"})
+    ok = denied(over) and not denied(within)
+    return result("TC-10", "PASS" if ok else "FAIL",
+                  "Over-limit call refused (401/403); within-limit call not refused by authorization",
+                  {"over_limit": observe(over), "within_limit": observe(within)})
+
+
+def tc11(_: str) -> dict:
+    from sod_check import check, load, ASSIGNMENTS, RULES  # same folder
+    rules = load(RULES)
+    current = check(load(ASSIGNMENTS), rules)
+    tampered = load(ASSIGNMENTS)
+    first = next(iter(tampered["agents"]))
+    tampered["agents"][first]["roles"] = sorted(set(tampered["agents"][first]["roles"]) | set(rules["conflicts"][0]["roles"]))
+    caught = check(tampered, rules)
+    ok = not current and any(i["rule"] == rules["conflicts"][0]["id"] for i in caught)
+    return result("TC-11", "PASS" if ok else "FAIL",
+                  "Current assignments have no conflicts; adding a conflicting role is detected",
+                  {"current_issues": current, "injected_conflict_detected": caught})
+
+
+def tc12(_: str) -> dict:
+    standing = mcp_call(env("WRITE_TOOL"), env("READ_WRITE_TOKEN"), {"amount": 25, "memo": "TRIAD TC-12 standing"})
+    elevated_token = env("ELEVATED_TOKEN", required=False)
+    obs = {"standing_token": observe(standing)}
+    if not elevated_token:
+        return result("TC-12", "PASS" if denied(standing) else "FAIL",
+                      "Standing token refused for the high-risk tool", obs,
+                      "Set ELEVATED_TOKEN (issued after approval) to also confirm the approved path works.")
+    elevated = mcp_call(env("WRITE_TOOL"), elevated_token, {"amount": 25, "memo": "TRIAD TC-12 elevated"})
+    obs["elevated_token"] = observe(elevated)
+    ok = denied(standing) and not denied(elevated)
+    return result("TC-12", "PASS" if ok else "FAIL",
+                  "Standing token refused; approved, short-lived elevated token allowed", obs)
+
+
+def tc13(_: str) -> dict:
+    target = int(env("REVOCATION_TARGET_SECONDS", required=False) or 300)
+    token = env("AGENT_TOKEN_TO_REVOKE")
+    first = mcp_call(env("READ_TOOL"), token)
+    if denied(first):
+        return result("TC-13", "ERROR", "", observe(first), "Token was already refused before revocation started.")
+    input("Disable the agent identity now, then press Enter to start the clock... ")
+    start, last_ok, polls = time.time(), None, 0
+    while time.time() - start < target + 60:
+        r = mcp_call(env("READ_TOOL"), token)
+        polls += 1
+        if denied(r):
+            elapsed = round(time.time() - start, 1)
+            return result("TC-13", "PASS" if elapsed <= target else "FAIL",
+                          f"Calls refused within {target} seconds of disabling the agent",
+                          {"seconds_to_cutoff": elapsed, "polls": polls, "last_success_after_s": last_ok})
+        last_ok = round(time.time() - start, 1)
+        time.sleep(5)
+    return result("TC-13", "FAIL", f"Calls refused within {target} seconds of disabling the agent",
+                  {"seconds_to_cutoff": None, "polls": polls, "last_success_after_s": last_ok},
+                  "Agent still had access when the test window closed: check token lifetime and continuous access evaluation.")
+
+
 TESTS = {"TC-01": tc01, "TC-02": tc02, "TC-03": tc03, "TC-04": tc04,
-         "TC-05": tc05, "TC-06": tc06, "TC-07": tc07, "TC-08": tc08}
+         "TC-05": tc05, "TC-06": tc06, "TC-07": tc07, "TC-08": tc08,
+         "TC-09": tc09, "TC-10": tc10, "TC-11": tc11, "TC-12": tc12, "TC-13": tc13}
 
 
 # --------------------------------------------------------------------------- main

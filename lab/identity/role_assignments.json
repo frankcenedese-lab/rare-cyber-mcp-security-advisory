@@ -1,0 +1,16 @@
+{
+  "agents": {
+    "agent-finance-01": {
+      "owner": "finance-systems-lead",
+      "roles": ["MCPTool.CustomerRead", "MCPTool.FinancialWrite"]
+    },
+    "agent-reporting-01": {
+      "owner": "data-governance-lead",
+      "roles": ["MCPTool.CustomerRead", "MCPTool.ExportWrite"]
+    },
+    "agent-approvals-01": {
+      "owner": "controller",
+      "roles": ["MCPTool.FinancialApprove"]
+    }
+  }
+}

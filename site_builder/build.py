@@ -28,10 +28,11 @@ SITE = "Rare Cyber AI Security Lab"
 PAGES = [
     ("method.html", "Method", "case-study.md", "Section 1"),
     ("threat-model.html", "Threat Model", "threat-model.md", "Section 2"),
-    ("configuration.html", "Configuration", "configuration.md", "Section 3"),
-    ("testing-guide.html", "Testing", "advisory/testing-guide.md", "Section 4"),
-    ("results.html", "Results", "evidence/index.md", "Section 5"),
-    ("limitations.html", "Limitations", "limitations.md", "Section 6"),
+    ("identity.html", "Identity", "identity-architecture.md", "Section 3"),
+    ("configuration.html", "Configuration", "configuration.md", "Section 4"),
+    ("testing-guide.html", "Testing", "advisory/testing-guide.md", "Section 5"),
+    ("results.html", "Results", "evidence/index.md", "Section 6"),
+    ("limitations.html", "Limitations", "limitations.md", "Section 7"),
     ("executive-summary.html", "Executive Summary", "advisory/executive-brief.md", "Appendix"),
 ]
 SOURCE_TO_PAGE = {"index.md": "index.html", **{src: out for out, _, src, _ in PAGES}}
@@ -43,9 +44,14 @@ TAKEAWAYS = {
         "Every control maps to NIST SP 800-53 and has an AWS and a Microsoft implementation.",
     ],
     "threat-model.md": [
-        "Ten threats identified across five trust boundaries using STRIDE.",
-        "Four are tested, five have defined tests not yet run, and one is open for review.",
+        "Fifteen threats identified across five trust boundaries using STRIDE, five of them from the identity analysis.",
+        "Five are tested, nine have defined tests not yet run, and one is open for review.",
         "STRIDE is the backbone; CSA MAESTRO and the OWASP Agentic Top 10 catch what it misses.",
+    ],
+    "identity-architecture.md": [
+        "Four identities are involved in every tool call: user, agent, MCP server and downstream API.",
+        "Each hop gets a new token bound to one audience; the agent's token is never forwarded.",
+        "The lab is at level 2 of a five-level maturity model; levels 3 to 5 are designed with tests TC-08 to TC-13.",
     ],
     "configuration.md": [
         "Six configuration changes produced the TRIAD results, each shown before and after on AWS and Microsoft.",
@@ -53,7 +59,7 @@ TAKEAWAYS = {
         "Every change traces to a threat, a test and an ISO/IEC 27001 or 42001 control.",
     ],
     "advisory/testing-guide.md": [
-        "The same eight tests run on AWS and Microsoft, with the same pass conditions.",
+        "Thirteen tests run on AWS and Microsoft, with the same pass conditions.",
         "Enforce each tool's role at the gateway before the call reaches the MCP server.",
         "Every test is automated in the lab harness and writes hashed, timestamped evidence.",
     ],
@@ -62,6 +68,8 @@ TAKEAWAYS = {
 FIGURES = {
     "attack": ("dg-attack.svg", "The same indirect prompt injection against an unhardened and a TRIAD hardened deployment."),
     "stride": ("dg-stride.svg", "Lab architecture with each STRIDE threat placed where it crosses a trust boundary."),
+    "idflow": ("dg-idflow.svg", "Identity flow for one tool call: the token at each hop, its audience and claims, and the blocked passthrough."),
+    "maturity": ("dg-maturity.svg", "Agent identity maturity model, with the lab's current level."),
 }
 
 

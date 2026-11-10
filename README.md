@@ -22,19 +22,12 @@ AI agents connected to business systems through the Model Context Protocol (MCP)
 | Abstract and key findings | [site home](https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/) |
 | 1. Method and Environment | [docs/case-study.md](docs/case-study.md) |
 | 2. Threat Model (STRIDE) | [docs/threat-model.md](docs/threat-model.md) |
-| 3. Configuration and Policy Changes | [docs/configuration.md](docs/configuration.md) |
-| 4. Testing Guide | [docs/advisory/testing-guide.md](docs/advisory/testing-guide.md) |
-| 5. Results and Evidence | [docs/evidence/index.md](docs/evidence/index.md) |
-| 6. Scope, Limitations and Change Log | [docs/limitations.md](docs/limitations.md) |
+| 3. Identity Architecture | [docs/identity-architecture.md](docs/identity-architecture.md) |
+| 4. Configuration and Policy Changes | [docs/configuration.md](docs/configuration.md) |
+| 5. Testing Guide | [docs/advisory/testing-guide.md](docs/advisory/testing-guide.md) |
+| 6. Results and Evidence | [docs/evidence/index.md](docs/evidence/index.md) |
+| 7. Scope, Limitations and Change Log | [docs/limitations.md](docs/limitations.md) |
 | Appendix: Executive Summary | [docs/advisory/executive-brief.md](docs/advisory/executive-brief.md) |
-
---- | :--- |
-| [The Build](docs/case-study.md) | The case study: build, threat model, break, fix, prove |
-| [Threat Model](docs/threat-model.md) | STRIDE analysis of the lab: ten threats, five trust boundaries |
-| [Configuration](docs/configuration.md) | Every configuration and policy change, before and after |
-| [Testing Guide](docs/advisory/testing-guide.md) | Eight tests on AWS and Microsoft, with pass conditions |
-| [Evidence](docs/evidence/index.md) | Assessment results and the evidence standard |
-| [Executive Brief](docs/advisory/executive-brief.md) | The risk, questions and decisions for leaders |
 
 ---
 
@@ -45,16 +38,18 @@ AI agents connected to business systems through the Model Context Protocol (MCP)
 ├── docs/                      # Site content (Markdown)
 │   ├── case-study.md
 │   ├── threat-model.md
+│   ├── identity-architecture.md
 │   ├── configuration.md
 │   ├── advisory/              # Executive brief and testing guide
 │   └── evidence/              # Evidence page, baseline results, harness runs
 ├── lab/                       # TRIAD test harness
-│   ├── triad_tests.py         # Runs TC-01 to TC-08 on AWS or Microsoft
+│   ├── triad_tests.py         # Runs TC-01 to TC-13 on AWS or Microsoft
 │   ├── tool_lock.py           # Tool definition hash lock (TC-06)
-│   ├── tools/ payloads/ queries/
+│   ├── sod_check.py           # Separation of duties and ownership check (TC-11)
+│   ├── tools/ identity/ payloads/ queries/
 │   └── README.md
 ├── site_builder/              # Builds the website from docs/
-└── .github/workflows/         # Site deploy + tool lock verification
+└── .github/workflows/         # Site deploy + tool lock and duties checks
 ```
 
 ---
