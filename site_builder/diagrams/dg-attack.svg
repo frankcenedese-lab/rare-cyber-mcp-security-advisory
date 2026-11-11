@@ -91,12 +91,12 @@
 <rect class="box" x="350" y="510" width="140" height="96" rx="9"/>
 <use href="#i-bot" x="408" y="520" width="24" height="24" class="ic"/>
 <text class="t1" x="420" y="566" text-anchor="middle">AI Agent</text>
-<text class="t2" x="420" y="584" text-anchor="middle">own agent identity</text>
+<text class="t2" x="420" y="584" text-anchor="middle">own IAM identity</text>
 
 <rect class="box good" x="530" y="510" width="160" height="96" rx="9"/>
 <use href="#i-gate" x="598" y="520" width="24" height="24" class="ic green"/>
-<text class="t1" x="610" y="566" text-anchor="middle">API Gateway</text>
-<text class="t2" x="610" y="584" text-anchor="middle">validate token scope</text>
+<text class="t1" x="610" y="560" text-anchor="middle">API Gateway</text>
+<text class="t2" x="610" y="578" text-anchor="middle">SigV4 signed request</text><text class="t2" x="610" y="594" text-anchor="middle">role checked per tool</text>
 
 <rect class="box" x="730" y="498" width="164" height="128" rx="9"/>
 <text class="t1" x="745" y="520">MCP Tool Server</text>
@@ -120,15 +120,15 @@
 <g class="step"><circle cx="508" cy="534" r="11" fill="#059669"/><text x="508" y="538">2</text></g>
 <g class="step"><circle cx="708" cy="534" r="11" fill="#059669"/><text x="708" y="538">3</text></g>
 <g class="step"><circle cx="515" cy="660" r="11" fill="#dc2626"/><text x="515" y="664">✕</text></g>
-<text class="sl r" x="470" y="684" text-anchor="middle">403 Forbidden · FinancialWrite scope missing</text>
+<text class="sl r" x="470" y="684" text-anchor="middle">403 Forbidden · read role can't call the write tool</text>
 
 <rect class="logbox ok" x="190" y="694" width="826" height="44" rx="8"/>
 <use href="#i-log" x="204" y="707" width="18" height="18" class="ic green"/>
 <text class="t1" x="232" y="714">CloudTrail · source identity</text>
-<text class="t2" x="232" y="729">Every decision correlated: user principal + agent identity + tool + arguments</text>
+<text class="t2" x="232" y="729">Every call recorded with the user (source identity), the role and the tool</text>
 <path class="fl grey dash" d="M255 606 V690" marker-end="url(#ak)"/>
 <path class="fl grey dash" d="M650 606 V690" marker-end="url(#ak)"/>
 <path class="fl grey dash" d="M812 626 V690" marker-end="url(#ak)"/>
 
-<text class="lg" x="30" y="770"><tspan font-weight="700" fill="#059669">1</tspan> Untrusted content scanned before the agent sees it</text><text class="lg" x="350" y="770"><tspan font-weight="700" fill="#059669">2</tspan> Call carries a scoped agent token</text><text class="lg" x="600" y="770"><tspan font-weight="700" fill="#059669">3</tspan> Gateway verifies the role for this specific tool</text>
+<text class="lg" x="30" y="770"><tspan font-weight="700" fill="#059669">1</tspan> Untrusted content scanned before the agent sees it</text><text class="lg" x="350" y="770"><tspan font-weight="700" fill="#059669">2</tspan> Call signed with the agent's IAM identity</text><text class="lg" x="600" y="770"><tspan font-weight="700" fill="#059669">3</tspan> MCP server checks the role for this tool</text>
 </svg>

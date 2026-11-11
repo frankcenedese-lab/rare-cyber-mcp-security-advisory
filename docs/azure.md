@@ -101,6 +101,7 @@ All testing was performed in environments owned and controlled by the author. Ru
 
 | Version | Date | Changes |
 | :--- | :--- | :--- |
+| 2.3 | 2026-11-11 | Landing page: results shown in the hero, shorter abstract, attack diagram corrected to match the AWS lab (signed requests at the gateway, role checked per tool in the MCP server), diagrams scroll on phones. |
 | 2.2 | 2026-11-11 | Added the Azure reference design diagram. |
 | 2.1 | 2026-11-11 | Credited Zach Marcy for the original AWS lab. Removed repeated tables and page summaries, and shortened the Azure differences. |
 | 2.0 | 2026-11-11 | Condensed to four pages focused on what was built and tested. Anchored on OWASP least agency and NIST SP 800-53. Removed non-standard terms and the agent identity maturity model. Earlier pages are kept in the repository archive. |

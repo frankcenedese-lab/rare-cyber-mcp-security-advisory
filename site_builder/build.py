@@ -83,7 +83,8 @@ def fix_links(body: str, src: str) -> str:
 
 def figure(key: str) -> str:
     name, cap = FIGURES[key]
-    return f'<div class="figure">{svg(name, prefix=key + "-")}<div class="figcap">{cap}</div></div>'
+    return (f'<div class="figure">{svg(name, prefix=key + "-")}</div>'
+            f'<div class="figscroll">Swipe sideways to see the full diagram.</div><div class="figcap">{cap}</div>')
 
 
 def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str]:

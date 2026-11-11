@@ -1,28 +1,36 @@
 
 <section class="hero report">
   <div class="hero-in">
-    <div class="eyebrow">Technical report · Version 2.2 · November 2026</div>
-    <h1>Securing AI Agents with Privileged Tool Access: <span>least agency, tested in an AWS lab</span></h1>
+    <div class="eyebrow">Technical report · Version 2.3 · November 2026</div>
+    <h1>Least agency for AI agents: <span>tested in an AWS lab</span></h1>
+    <p class="sub">Securing AI agents with privileged tool access</p>
     <p class="byline">Frank Cenedese, CISSP, CISA</p>
     <div class="cta-row">
       <a class="btn primary" href="lab.html">Read the report</a>
       <a class="btn ghost" href="https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory">Source and test harness</a>
     </div>
   </div>
+  <div class="rcard">
+    <div class="h">Lab result · AWS</div>
+    <div class="row"><div><b>Least privilege</b><small>NIST AC-6</small></div><div class="res"><span class="f">FAIL</span><i>→</i><span class="p">PASS</span></div></div>
+    <div class="row"><div><b>Input validation</b><small>NIST SI-10</small></div><div class="res"><span class="f">FAIL</span><i>→</i><span class="p">PASS</span></div></div>
+    <div class="row"><div><b>Audit generation</b><small>NIST AU-12</small></div><div class="res"><span class="f">FAIL</span><i>→</i><span class="p">PASS</span></div></div>
+    <div class="note">Same three tests on the default build and the hardened build.</div>
+  </div>
 </section>
 
 <section class="strip">
-  <div><b>3 of 3</b><span>controls failed on the default build, then passed</span></div>
+  <div><b>4</b><span>tools, from read-only to bulk export</span></div>
   <div><b>16</b><span>threats modelled with STRIDE</span></div>
   <div><b>4</b><span>configuration changes, before and after</span></div>
-  <div><b>AWS</b><span>tested · Azure differences documented</span></div>
+  <div><b>13</b><span>tests defined, pass conditions set in advance</span></div>
 </section>
 
 <section class="block">
   <div class="report-body">
     <h2 id="abstract">Abstract</h2>
-    <p>The OWASP Top 10 for Agentic Applications (2026) sets out the principle of least agency: an AI agent should get only the access and autonomy its task needs. In practice, agents connected to business systems through the Model Context Protocol (MCP) often run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person.</p>
-    <p>This report tests that principle in a lab. An agent with four tools (read, financial write, approval and export) was deployed on AWS with default settings, threat modelled with STRIDE, hardened with four configuration changes, and re-tested. The default build failed three NIST SP 800-53 controls: least privilege (AC-6), input validation (SI-10) and audit generation (AU-12). All three passed after hardening. The report also sets out how the same problem appears on Azure, where several platform behaviours change how the controls must be built, and states its limitations plainly.</p>
+    <p>The OWASP Top 10 for Agentic Applications (2026) sets out the principle of least agency: an AI agent should get only the access its task needs. Agents connected to business systems through the Model Context Protocol (MCP) often break it, running every tool under one shared credential.</p>
+    <p>This report tests the principle in a lab. An agent with four tools was deployed on AWS with default settings, threat modelled with STRIDE, hardened with four configuration changes and re-tested. It also sets out how the same problem appears on Azure, and states its limitations.</p>
 
     <h2 id="findings">Key findings</h2>
     <p class="fnote"><span class="ftag t">Tested</span> findings come from tests run in the AWS lab. <span class="ftag a">Analysis</span> findings come from the threat model and Microsoft's documentation.</p>
@@ -41,7 +49,7 @@
     <h2 id="architecture">Lab architecture and attack path</h2>
     <p>The same indirect prompt injection against the default build and the hardened build in the AWS lab.</p>
   </div>
-  <div class="figure">{{ATTACK}}<div class="figcap">Figure 1. The lab before and after hardening.</div></div>
+  <div class="figure">{{ATTACK}}</div><div class="figscroll" style="text-align:center">Swipe sideways to see the full diagram.</div><div class="figcap" style="text-align:center">Figure 1. The lab before and after hardening.</div>
 </section>
 
 <section class="block">
