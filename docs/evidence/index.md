@@ -1,31 +1,51 @@
 # Results and Evidence
 
-Results from the lab, reported only for tests that have been run. The run log comes first, then the evidence standard, then the original baseline and hardened findings. Each finding maps to a NIST SP 800-53 control and to a validation test in the [Testing Guide](../advisory/testing-guide.md#5-validation-test-plan).
+**Platform:** AWS lab  
+**Controls:** NIST SP 800-53 AC-6, SI-10, AU-12  
+**Author:** Frank Cenedese, CISSP, CISA
 
-Statuses: **PASS** means the test was run against the deployed lab. **VERIFIED** means the control logic was checked in the repository and CI, not in a deployed environment. **PLANNED** means the test is defined but not yet run.
+---
 
-## Test run log
+## Results
 
-| Test | Threat | AWS | Azure | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| TC-01 Out-of-scope tool call | E1 | PASS | PLANNED | v1.0 baseline (2026-11-10 10:00 UTC) and hardened (10:30 UTC) assessments, AWS lab |
-| TC-02 Indirect prompt injection | T1 | PASS | PLANNED | v1.0 assessments, AWS lab |
-| TC-03 Identity correlation | R1 | PASS | PLANNED | v1.0 assessments, AWS lab: user recorded for attribution |
-| TC-04 Spoofing | S1, S2 | PLANNED | PLANNED | Defined in v1.1 |
-| TC-05 Denial of service | D1 | PLANNED | PLANNED | Defined in v1.1 |
-| TC-06 Tool poisoning | T2 | VERIFIED | VERIFIED | Hash check logic verified in the repository harness and CI, 2026-11-10; deployment pipelines not yet tested |
-| TC-07 Data export | I1 | PLANNED | PLANNED | Defined in v1.1 |
-| TC-08 Confused deputy | E2 | PLANNED | PLANNED | Defined in v1.1 |
-| TC-09 Audience binding | S3 | PLANNED | PLANNED | Defined in v1.2 |
-| TC-10 Parameter policy | E3 | PLANNED | PLANNED | Defined in v1.2 |
-| TC-11 Separation of duties | E4 | VERIFIED | VERIFIED | Role assignment check verified in the repository harness and CI, 2026-11-10; IAM and Entra assignments not yet tested |
-| TC-12 Just-in-time elevation | E5 | PLANNED | PLANNED | Defined in v1.2 |
-| TC-13 Revocation time | E6 | PLANNED | PLANNED | Defined in v1.2 |
+Three tests were run against the default build, then repeated after hardening.
 
-Harness output for each run is committed under `docs/evidence/runs/` and listed here with its date.
+| Test | What was attempted | Before hardening | After hardening |
+| :--- | :--- | :--- | :--- |
+| **TC-01** Out-of-scope action | The agent was induced to call the financial write tool during a task that needed only a lookup | **FAIL:** allowed, because the shared role permitted it | **PASS:** refused with `403`; the read identity had no write permission |
+| **TC-02** Indirect prompt injection | Instructions were planted in content the agent would read, directing it to use a write tool | **FAIL:** followed, because nothing inspected the content | **PASS:** flagged by Bedrock Guardrails before the agent acted |
+| **TC-03** Attribution | A tool call was traced back to the user who started the session | **FAIL:** logs showed an API call, not a person or a tool | **PASS:** each call recorded with the user, agent and tool |
 
-!!! note "About this evidence"
-    The baseline files below are from the lab environment; account identifiers are placeholders. New results come from the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab) and are added to the run log as each test is run.
+| Control | Before | After |
+| :--- | :--- | :--- |
+| AC-6 Least Privilege | FAIL | PASS |
+| SI-10 Input Validation | FAIL | PASS |
+| AU-12 Audit Generation | FAIL | PASS |
+
+A passing TC-02 shows the control caught the tested payloads, not every possible injection.
+
+---
+
+## What hasn't been tested yet
+
+Results are reported only for tests that have been run. These are defined in the [lab test harness](https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory/tree/main/lab), with pass conditions set in advance:
+
+| Test | Threat | Status |
+| :--- | :--- | :--- |
+| TC-06 Tool definition hash lock | T2 | VERIFIED in the repository and CI |
+| TC-11 Separation of duties | E4 | VERIFIED in the repository and CI |
+| TC-04 Spoofing and token replay | S1, S2 | PLANNED |
+| TC-05 Tool-call loop throttling | D1 | PLANNED |
+| TC-07 Bulk export gated by its own role | I1 | PLANNED |
+| TC-08 Confused deputy | E2 | PLANNED |
+| TC-09 Token audience binding | S3 | PLANNED |
+| TC-10 Amount limits within an allowed tool | E3 | PLANNED |
+| TC-12 Time-bound elevation for high-risk tools | E5 | PLANNED |
+| TC-13 Time to cut off a disabled agent | E6 | PLANNED |
+
+The same tests are the plan for the Azure lab.
+
+---
 
 ## Evidence standard
 
@@ -37,44 +57,34 @@ A result counts as evidence only when it records:
 | Expected and observed outcome | Shows the pass condition was set before the test ran |
 | UTC timestamp, environment and operator | Establishes when, where and by whom |
 | SHA-256 hash of the raw observation | Makes later editing detectable |
-| Attached output for manual tests | Lets a reviewer re-perform the check |
 
-Runs are never edited. A re-test is a new run.
+Runs are never edited; a re-test is a new run. The harness writes each run to `docs/evidence/runs/` in this format.
 
-The two v1.0 assessment files below predate this standard: they record findings and timestamps but not the operator, expected outcomes or hashes. TC-01 to TC-03 will be re-run with the harness to produce evidence that meets it.
-
----
-
-## Erratum (version 1.3)
-
-The hardened assessment file is labelled `AWS-Microsoft-Hardened-TRIAD`, and its descriptions of FINDING-02 and FINDING-03 mention Azure API Management and Sentinel. Those Microsoft components were not tested; the results apply to the **AWS lab only**. FINDING-02's description also credits token (JWT) validation with filtering injection: token validation authenticates callers, while content inspection (Bedrock Guardrails in the lab) is what flags injected content. The files are kept unedited under the evidence standard; the tables below state the corrected scope.
+The two original assessment files below predate this standard: they record findings and timestamps, but not the operator, expected outcomes or hashes. TC-01 to TC-03 will be re-run with the harness to produce evidence that meets it.
 
 ---
 
-## Before hardening
+## Original assessment files
 
-**Environment:** AWS baseline, unhardened · **Status:** :material-close-circle:{ style="color: #c62828" } NON-COMPLIANT
+**Before hardening** (AWS baseline, 2026-11-10 10:00 UTC) · :material-close-circle:{ style="color: #c62828" } NON-COMPLIANT
 
-| ID | Pillar | Severity (v1.0) | Finding | NIST control |
-| :--- | :--- | :--- | :--- | :--- |
-| FINDING-01 | Rigid Identity Decoupling | **CRITICAL** | Shared service credential detected (Identity Flattening). All MCP tools execute under a single IAM role. | AC-6 Least Privilege |
-| FINDING-02 | Threat Modelling & Poison Analysis | **HIGH** | Missing input/output guardrails. Unsanitized tool output permits indirect prompt injection. | SI-10 Input Validation |
-| FINDING-03 | Audit Telemetry & Correlation | **MEDIUM** | Uncorrelated execution logs. Tool calls aren't mapped to the user principal. | AU-12 Audit Generation |
-
-Severities are as recorded in the v1.0 assessment. The v1.1 threat model re-rated indirect prompt injection (T1) as Critical and attribution (R1) as High.
+| ID | Severity | Finding | Control |
+| :--- | :--- | :--- | :--- |
+| FINDING-01 | **CRITICAL** | Shared service credential: all MCP tools execute under a single IAM role | AC-6 Least Privilege |
+| FINDING-02 | **HIGH** | No input or output guardrails: unsanitized tool output permits indirect prompt injection | SI-10 Input Validation |
+| FINDING-03 | **MEDIUM** | Uncorrelated execution logs: tool calls aren't mapped to the user | AU-12 Audit Generation |
 
 [Download scan-vulnerable.json](scan-vulnerable.json){ .md-button }
 
----
+**After hardening** (AWS lab, 2026-11-10 10:30 UTC) · :material-check-circle:{ style="color: #2e7d32" } COMPLIANT
 
-## After hardening
-
-**Environment:** AWS lab, TRIAD hardened (see erratum) · **Status:** :material-check-circle:{ style="color: #2e7d32" } COMPLIANT
-
-| ID | Pillar | Status | Control in place | NIST control |
-| :--- | :--- | :--- | :--- | :--- |
-| FINDING-01 | Rigid Identity Decoupling | **PASS** | Per-tool workload identities (`MCPTool.CustomerRead` vs `MCPTool.FinancialWrite`) | AC-6 Least Privilege |
-| FINDING-02 | Threat Modelling & Poison Analysis | **PASS** | Bedrock Guardrails content inspection flags indirect prompt injection | SI-10 Input Validation |
-| FINDING-03 | Audit Telemetry & Correlation | **PASS** | Tool calls recorded with the user principal for attribution (CloudTrail) | AU-12 Audit Generation |
+| ID | Status | Control in place | Control |
+| :--- | :--- | :--- | :--- |
+| FINDING-01 | **PASS** | One workload identity per tool | AC-6 Least Privilege |
+| FINDING-02 | **PASS** | Bedrock Guardrails content inspection | SI-10 Input Validation |
+| FINDING-03 | **PASS** | Tool calls recorded with the user (CloudTrail source identity) | AU-12 Audit Generation |
 
 [Download scan-hardened.json](scan-hardened.json){ .md-button }
+
+!!! note "Correction to the hardened file"
+    The hardened file is labelled `AWS-Microsoft-Hardened-TRIAD` (TRIAD was the lab's working name for its hardening steps), and its descriptions mention Azure API Management and Sentinel. No Microsoft component was tested; the results apply to the AWS lab only. The file also credits token validation with filtering injection: token validation authenticates callers, while content inspection is what flagged the injected content. The files are kept unedited; this page states the corrected scope.

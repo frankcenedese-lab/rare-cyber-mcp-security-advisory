@@ -1,6 +1,6 @@
-# TRIAD Lab Test Harness
+# Lab Test Harness
 
-Repeatable tests for the thirteen TRIAD test cases, on AWS or Azure. Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
+Repeatable tests for the thirteen test cases, on AWS or Azure. (`triad_tests.py` keeps the lab's original working name.) Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
 
 > Only run these tests against environments you own or are authorized to test.
 
@@ -24,7 +24,7 @@ python lab/triad_tests.py --platform aws --only TC-01 TC-07
 | Test | Threat | What it checks | How |
 | :--- | :--- | :--- | :--- |
 | TC-01 | E1 | Read-only identity can't call the write tool | Automated |
-| TC-02 | T1 | Injected instructions in a document are flagged | Automated (Prompt Shields or Bedrock Guardrails) |
+| TC-02 | T1 | Injected instructions in a document are flagged | Automated (Bedrock Guardrails or Prompt Shields) |
 | TC-03 | R1 | One query shows user, agent and tool | Manual: run the query in `lab/queries/`, attach the result |
 | TC-04 | S1, S2 | Expired token and unregistered server are refused | Automated |
 | TC-05 | D1 | A flood of tool calls is throttled | Automated |

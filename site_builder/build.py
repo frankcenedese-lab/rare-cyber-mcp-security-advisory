@@ -26,52 +26,41 @@ SITE = "Rare Cyber AI Security Lab"
 
 # (output file, nav label, source markdown, audience tag)
 PAGES = [
-    ("method.html", "Method", "case-study.md", "Section 1"),
-    ("threat-model.html", "Threat Model", "threat-model.md", "Section 2"),
-    ("identity.html", "Identity", "identity-architecture.md", "Section 3"),
-    ("configuration.html", "Configuration", "configuration.md", "Section 4"),
-    ("testing-guide.html", "Testing", "advisory/testing-guide.md", "Section 5"),
-    ("results.html", "Results", "evidence/index.md", "Section 6"),
-    ("limitations.html", "Limitations", "limitations.md", "Section 7"),
-    ("executive-summary.html", "Executive Summary", "advisory/executive-brief.md", "Appendix"),
+    ("lab.html", "What I Built", "lab.md", "Section 1"),
+    ("results.html", "Results", "evidence/index.md", "Section 2"),
+    ("azure.html", "Azure and Limitations", "azure.md", "Section 3"),
 ]
+# Pages from version 1.x, redirected so existing links keep working
+REDIRECTS = {
+    "method.html": "lab.html", "threat-model.html": "lab.html#threat-model",
+    "identity.html": "azure.html", "configuration.html": "lab.html#hardening-changes-before-and-after",
+    "testing-guide.html": "azure.html", "limitations.html": "azure.html#limitations",
+    "executive-summary.html": "index.html",
+}
 SOURCE_TO_PAGE = {"index.md": "index.html", **{src: out for out, _, src, _ in PAGES}}
 
 TAKEAWAYS = {
-    "case-study.md": [
-        "An MCP agent environment with four tools was built with default settings, assessed, hardened with TRIAD and re-assessed.",
-        "Three controls failed on the default build; all three passed after hardening.",
-        "Hardening recorded the user on every call (attribution); capping the agent at the user's rights is level 3, not yet implemented.",
+    "lab.md": [
+        "The principle tested is OWASP's least agency: an agent gets only the access its task needs.",
+        "An MCP agent with four tools was deployed on AWS with one shared role, threat modelled with STRIDE, and hardened with four configuration changes.",
+        "The primary control is one identity per tool; content inspection and logging support it.",
     ],
-    "threat-model.md": [
-        "Sixteen threats identified across five trust boundaries using STRIDE, checked against MAESTRO and the OWASP Agentic Top 10.",
-        "Three are tested in the lab, two verified in the repository, nine have defined tests not yet run, and two are open.",
-        "STRIDE is the backbone; CSA MAESTRO and the OWASP Agentic Top 10 catch what it misses.",
+    "evidence/index.md": [
+        "Three controls failed on the default build and passed after hardening: AC-6, SI-10 and AU-12.",
+        "Ten further tests are defined with pass conditions and reported as planned until run.",
+        "Every new result is recorded with a timestamp, expected outcome and SHA-256 hash.",
     ],
-    "identity-architecture.md": [
-        "Four identities are involved in every tool call: user, agent, MCP server and downstream API.",
-        "Each hop gets a new token bound to one audience; the agent's token is never forwarded.",
-        "The lab is at level 2 of a five-level maturity model, with user attribution; levels 3 to 5 are designed with tests TC-08 to TC-13.",
-    ],
-    "configuration.md": [
-        "Six configuration changes produced the TRIAD results, each shown before and after on AWS (tested) and Azure (reference design).",
-        "Eight governance policies changed so the configuration can't quietly drift back.",
-        "Every change traces to a threat, a test and an ISO/IEC 27001 or 42001 control.",
-    ],
-    "advisory/testing-guide.md": [
-        "Thirteen tests with the same pass conditions: run on AWS, defined for Azure.",
-        "Least privilege has two layers on both clouds: which tools an agent may call, and what each tool's own identity can reach.",
-        "Every test is defined in the lab harness, which writes hashed, timestamped evidence.",
+    "azure.md": [
+        "On Azure the over-provisioned account is usually one managed identity shared by every tool.",
+        "Several Azure behaviours change the controls: token caching, Conditional Access coverage, revocation and attribution.",
+        "Limitations and residual risk are stated plainly; Azure is a reference design until tested.",
     ],
 }
 
 FIGURES = {
-    "attack": ("dg-attack.svg", "The same indirect prompt injection against an unhardened and a TRIAD hardened deployment."),
+    "attack": ("dg-attack.svg", "The same indirect prompt injection against the default and the hardened deployment."),
     "stride": ("dg-stride.svg", "Lab architecture with each STRIDE threat placed where it crosses a trust boundary."),
-    "idflow": ("dg-idflow.svg", "Identity flow for one tool call: the token at each hop, its audience and claims, and the blocked passthrough. Claim names follow RFC 8693; Entra identifies the agent in azp and xms_act_fct instead of act."),
-    "matrix": ("dg-matrix.svg", "Control equivalence: the tested AWS stack and the Azure reference design. On Azure, least privilege covers both the tool credential and caller authorization."),
-    "decouple": ("dg-decouple.svg", "Identity flattening compared with decoupled, tool-scoped workload identities, using the lab's four tools."),
-    "maturity": ("dg-maturity.svg", "Agent identity maturity model, with the lab's current level."),
+    "decouple": ("dg-decouple.svg", "One shared credential compared with one scoped identity per tool, using the lab's four tools."),
 }
 
 
@@ -135,7 +124,7 @@ def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str
         body = f'<div class="takeaways"><div class="t">Summary</div><ul>{items}</ul></div>' + body
 
     tokens = md.toc_tokens[0]["children"] if md.toc_tokens and md.toc_tokens[0]["level"] == 1 else md.toc_tokens
-    toc = "".join(f'<li><a href="#{t["id"]}">{re.sub(r"^[TRIAD]: ", "", t["name"])}</a></li>' for t in tokens)
+    toc = "".join(f'<li><a href="#{t["id"]}">{t["name"]}</a></li>' for t in tokens)
     pills = "".join(f"<span>{x}</span>" for x in meta[:4])
     page = (f'<div class="phead"><div class="phead-in"><div class="crumb">{SITE.replace("Rare Cyber ", "")} / {label}</div>'
             f'<h1>{title}</h1><div class="meta">{pills}</div></div></div>'
@@ -164,7 +153,7 @@ def main() -> None:
 
     home = (HERE / "home.html").read_text().replace("{{ATTACK}}", svg("dg-attack.svg", "hm-"))
     write("index.html", home, "Securing AI Agents with Privileged Tool Access · Technical Report",
-          "A threat-modelled lab, tested on AWS with an Azure reference design: STRIDE analysis, configuration and policy changes, test cases and evidence for AI agents using MCP.")
+          "Least agency in practice: an AI agent's MCP tool access, threat modelled, hardened and tested on AWS, with the Azure differences.")
     for out, label, src, tag in PAGES:
         body, title, desc = render_page(out, label, src, tag)
         write(out, body, f"{label} · {SITE}", desc)
@@ -174,6 +163,9 @@ def main() -> None:
         dest = OUT / "evidence" / f.relative_to(DOCS / "evidence")
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(f, dest)
+    for old, new in REDIRECTS.items():
+        (OUT / old).write_text(f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url={new}">'
+                               f'<link rel="canonical" href="{new}"><a href="{new}">This page has moved.</a>')
     (OUT / ".nojekyll").write_text("")
     print(f"Built {len(PAGES) + 1} pages to {OUT.relative_to(REPO)}/")
 

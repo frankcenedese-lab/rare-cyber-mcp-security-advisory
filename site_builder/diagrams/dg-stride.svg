@@ -25,13 +25,13 @@
 <text class="t1" x="280" y="205" text-anchor="middle">AI Agent</text><text class="t2" x="280" y="223" text-anchor="middle">MCP client</text>
 
 <rect class="box good" x="400" y="50" width="180" height="56" rx="9"/>
-<text class="t1" x="490" y="76" text-anchor="middle">Identity provider</text><text class="t2" x="490" y="93" text-anchor="middle">IAM · Entra Agent ID</text>
+<text class="t1" x="490" y="76" text-anchor="middle">Identity provider</text><text class="t2" x="490" y="93" text-anchor="middle">AWS IAM · STS</text>
 
 <rect class="box good" x="400" y="170" width="180" height="80" rx="9"/>
-<text class="t1" x="490" y="205" text-anchor="middle">API Gateway</text><text class="t2" x="490" y="223" text-anchor="middle">API Gateway · APIM</text>
+<text class="t1" x="490" y="205" text-anchor="middle">API Gateway</text><text class="t2" x="490" y="223" text-anchor="middle">Amazon API Gateway</text>
 
 <rect class="box" x="620" y="50" width="170" height="56" rx="9"/>
-<text class="t1" x="705" y="76" text-anchor="middle">Tool registry</text><text class="t2" x="705" y="93" text-anchor="middle">Git · API Center</text>
+<text class="t1" x="705" y="76" text-anchor="middle">Tool registry</text><text class="t2" x="705" y="93" text-anchor="middle">Git · hash locked</text>
 
 <rect class="box" x="620" y="160" width="170" height="100" rx="9"/>
 <text class="t1" x="705" y="184" text-anchor="middle">MCP Tool Server</text>
@@ -43,7 +43,7 @@
 <text class="t1" x="922" y="205" text-anchor="middle">Business data</text><text class="t2" x="922" y="223" text-anchor="middle">finance · customer records</text>
 
 <rect class="logbox ok" x="200" y="324" width="812" height="42" rx="8"/>
-<text class="t1" x="226" y="343">Audit logging</text><text class="t2" x="226" y="358">CloudTrail · Sentinel · Purview</text>
+<text class="t1" x="226" y="343">Audit logging</text><text class="t2" x="226" y="358">CloudTrail · CloudWatch</text>
 
 <!-- flows -->
 <path class="fl kk" d="M160 210 H196" marker-end="url(#sk)"/>

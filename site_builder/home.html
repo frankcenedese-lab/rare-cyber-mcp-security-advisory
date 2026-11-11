@@ -1,37 +1,37 @@
+
 <section class="hero report">
   <div class="hero-in">
-    <div class="eyebrow">Technical report · Version 1.4 · November 2026</div>
-    <h1>Securing AI Agents with Privileged Tool Access: <span>a threat-modelled lab, tested on AWS, with an Azure reference design</span></h1>
+    <div class="eyebrow">Technical report · Version 2.0 · November 2026</div>
+    <h1>Securing AI Agents with Privileged Tool Access: <span>least agency, tested in an AWS lab</span></h1>
     <p class="byline">Frank Cenedese, CISSP, CISA</p>
     <div class="cta-row">
-      <a class="btn primary" href="method.html">Read the report</a>
+      <a class="btn primary" href="lab.html">Read the report</a>
       <a class="btn ghost" href="https://github.com/frankcenedese-lab/rare-cyber-mcp-security-advisory">Source and test harness</a>
     </div>
   </div>
 </section>
 
 <section class="strip">
+  <div><b>3 of 3</b><span>controls failed on the default build, then passed</span></div>
   <div><b>16</b><span>threats modelled with STRIDE</span></div>
-  <div><b>4</b><span>identities modelled per tool call</span></div>
-  <div><b>13</b><span>test cases, pass conditions set in advance</span></div>
-  <div><b>1+1</b><span>AWS tested · Azure reference design</span></div>
+  <div><b>4</b><span>configuration changes, before and after</span></div>
+  <div><b>AWS</b><span>tested · Azure differences documented</span></div>
 </section>
 
 <section class="block">
   <div class="report-body">
     <h2 id="abstract">Abstract</h2>
-    <p>AI agents connected to business systems through the Model Context Protocol (MCP) commonly run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person. This report describes a lab built to examine those risks. An agent with four tools (read, financial write, approval and export) was deployed on AWS with default settings, assessed, hardened with the TRIAD framework, and re-assessed. An Azure reference design for the same lab sets out where Azure behaves differently, in particular that its over-provisioned account is usually one managed identity shared by every tool; Azure results will be added once tests are run in a tenant.</p>
-    <p>The baseline failed three controls: least privilege (NIST SP 800-53 AC-6), input validation (SI-10) and audit generation (AU-12). All three passed after hardening in the AWS lab. A subsequent STRIDE threat model identified sixteen threats across five trust boundaries, including two that the original tests only partly covered: excessive data export and the confused deputy problem. An identity analysis separates the four identities in each tool call (user, agent, MCP server and downstream API) and places the lab at level 2 of a five-level agent identity maturity model: each tool has its own role and the user is recorded, but authorization isn't yet capped at the user's rights. The report documents each configuration and policy change before and after, defines thirteen test cases with an automated harness that records hashed evidence, and states its limitations and residual risk.</p>
+    <p>The OWASP Top 10 for Agentic Applications (2026) sets out the principle of least agency: an AI agent should get only the access and autonomy its task needs. In practice, agents connected to business systems through the Model Context Protocol (MCP) often run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person.</p>
+    <p>This report tests that principle in a lab. An agent with four tools (read, financial write, approval and export) was deployed on AWS with default settings, threat modelled with STRIDE, hardened with four configuration changes, and re-tested. The default build failed three NIST SP 800-53 controls: least privilege (AC-6), input validation (SI-10) and audit generation (AU-12). All three passed after hardening. The report also sets out how the same problem appears on Azure, where several platform behaviours change how the controls must be built, and states its limitations plainly.</p>
 
     <h2 id="findings">Key findings</h2>
-    <p class="fnote"><span class="ftag t">Tested</span> findings come from tests run in the AWS lab. <span class="ftag a">Analysis</span> findings come from the threat model and identity analysis; their tests are defined but not yet run.</p>
+    <p class="fnote"><span class="ftag t">Tested</span> findings come from tests run in the AWS lab. <span class="ftag a">Analysis</span> findings come from the threat model and Microsoft's documentation.</p>
     <ol class="findings">
-      <li><span class="ftag t">Tested</span> <b>Shared credentials are the root exposure.</b> When every tool runs under one identity, a read-only task can perform financial writes. Per-tool identities closed this in the lab.</li>
-      <li><span class="ftag a">Analysis</span> <b>Checking the agent isn't enough.</b> The gateway must also check the rights of the person the agent acts for, or the agent becomes a confused deputy.</li>
-      <li><span class="ftag a">Analysis</span> <b>Export is its own privilege.</b> Read and write rights shouldn't imply the right to extract data in bulk.</li>
-      <li><span class="ftag t">Tested</span> <b>Attribution needs design.</b> Default logs show an API call, not the user, agent and tool together. Recording the user's identity on every call fixed this in the lab.</li>
-      <li><span class="ftag a">Analysis</span> <b>Per-tool roles are only level 2 of 5.</b> Expert-grade agent identity needs delegation with audience-bound tokens, parameter-level policy, separation of duties, just-in-time elevation and measured revocation.</li>
-      <li><span class="ftag a">Analysis</span> <b>Testing without a threat model overstates coverage.</b> Before the model, three tests appeared to cover the lab; afterwards, they fully covered three of the ten threats in the first model.</li>
+      <li><span class="ftag t">Tested</span> <b>A shared credential is the root exposure.</b> When every tool runs under one role, a read-only task can perform financial writes. One identity per tool closed this.</li>
+      <li><span class="ftag t">Tested</span> <b>Identity limits damage; detection doesn't stop it.</b> Content inspection flagged the injected instructions, but it is probabilistic. Per-tool identity is what caps what a steered agent can do.</li>
+      <li><span class="ftag t">Tested</span> <b>Attribution has to be designed in.</b> Default logs showed an API call, not the user, agent and tool together. Requiring the user's identity on every call fixed this.</li>
+      <li><span class="ftag a">Analysis</span> <b>The threat model found what the tests missed.</b> Three tests covered three of sixteen threats. Bulk export and the confused deputy need their own controls.</li>
+      <li><span class="ftag a">Analysis</span> <b>Azure needs its own design, not a service mapping.</b> Its over-provisioned account is usually one managed identity shared by every tool, and managed identity tokens can be cached for around 24 hours.</li>
     </ol>
   </div>
 </section>
@@ -39,23 +39,18 @@
 <section class="block alt">
   <div class="report-body wide">
     <h2 id="architecture">Lab architecture and attack path</h2>
-    <p>The same indirect prompt injection against the default build and the hardened build. Components and controls are vendor neutral; each has an AWS implementation (tested) and an Azure reference design.</p>
+    <p>The same indirect prompt injection against the default build and the hardened build in the AWS lab.</p>
   </div>
-  <div class="figure">{{ATTACK}}<div class="figcap">Figure 1. Reference architecture, unhardened and TRIAD hardened.</div></div>
+  <div class="figure">{{ATTACK}}<div class="figcap">Figure 1. The lab before and after hardening.</div></div>
 </section>
 
 <section class="block">
   <div class="report-body wide">
     <h2 id="contents">Contents</h2>
     <div class="toc-grid">
-      <a class="card doc" href="method.html"><div class="tag">Section 1</div><h3>Method and Environment</h3><p>What was built, how it was attacked, and the TRIAD controls applied.</p></a>
-      <a class="card doc" href="threat-model.html"><div class="tag">Section 2</div><h3>Threat Model</h3><p>STRIDE analysis: sixteen threats across five trust boundaries, each traced to a control and a test.</p></a>
-      <a class="card doc" href="identity.html"><div class="tag">Section 3</div><h3>Identity Architecture</h3><p>Four identities, the token at each hop, and a five-level agent identity maturity model.</p></a>
-      <a class="card doc" href="configuration.html"><div class="tag">Section 4</div><h3>Configuration and Policy Changes</h3><p>Six configuration changes before and after, and the eight governance policies they affect.</p></a>
-      <a class="card doc" href="testing-guide.html"><div class="tag">Section 5</div><h3>Testing Guide</h3><p>Thirteen test cases with AWS and Azure methods, and where Azure differs from AWS.</p></a>
-      <a class="card doc" href="results.html"><div class="tag">Section 6</div><h3>Results and Evidence</h3><p>Findings, the test run log and the evidence standard.</p></a>
-      <a class="card doc" href="limitations.html"><div class="tag">Section 7</div><h3>Scope, Limitations and Residual Risk</h3><p>What the lab covers, what risk remains, logging and privacy, and the change log.</p></a>
-      <a class="card doc" href="executive-summary.html"><div class="tag">Appendix</div><h3>Executive Summary</h3><p>The findings restated for decision-makers.</p></a>
+      <a class="card doc" href="lab.html"><div class="tag">Section 1</div><h3>What I Built and How I Hardened It</h3><p>The principle, the environment, the STRIDE threat model, and four changes before and after.</p></a>
+      <a class="card doc" href="results.html"><div class="tag">Section 2</div><h3>Results and Evidence</h3><p>Before and after results, the tests still to run, and the evidence standard.</p></a>
+      <a class="card doc" href="azure.html"><div class="tag">Section 3</div><h3>Applying It on Azure, and Limitations</h3><p>How the problem appears on Azure, where Azure differs from AWS, limitations and residual risk.</p></a>
     </div>
   </div>
 </section>

@@ -37,7 +37,7 @@ ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
 RUNS = REPO / "docs" / "evidence" / "runs"
 
-# Each test traces to a threat in docs/threat-model.md and a NIST SP 800-53 control.
+# Each test traces to a threat in docs/lab.md (threat model) and a NIST SP 800-53 control.
 CATALOG = {
     "TC-01": ("E1", "AC-6", "Out-of-scope tool call is refused"),
     "TC-02": ("T1", "SI-10", "Indirect prompt injection is detected"),
