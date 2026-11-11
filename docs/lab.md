@@ -1,4 +1,4 @@
-# What I Built and How I Hardened It
+# Lab Design and Hardening
 
 **Platform:** AWS lab (tested)  
 **Standards:** OWASP Top 10 for Agentic Applications (2026) · NIST SP 800-53 · STRIDE · MCP authorization specification  
@@ -15,6 +15,8 @@ The lab asks one practical question. **When an AI agent is connected to business
 ---
 
 ## The environment
+
+The original AWS lab was developed with Zach Marcy. This report's threat model, hardening analysis, test harness and Azure analysis are the author's own.
 
 The baseline was deployed the way a team building a pilot often would: working, fast and relying on defaults.
 

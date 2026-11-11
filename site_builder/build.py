@@ -26,7 +26,7 @@ SITE = "Rare Cyber AI Security Lab"
 
 # (output file, nav label, source markdown, audience tag)
 PAGES = [
-    ("lab.html", "What I Built", "lab.md", "Section 1"),
+    ("lab.html", "Lab Design", "lab.md", "Section 1"),
     ("results.html", "Results", "evidence/index.md", "Section 2"),
     ("azure.html", "Azure and Limitations", "azure.md", "Section 3"),
 ]
@@ -39,23 +39,7 @@ REDIRECTS = {
 }
 SOURCE_TO_PAGE = {"index.md": "index.html", **{src: out for out, _, src, _ in PAGES}}
 
-TAKEAWAYS = {
-    "lab.md": [
-        "The principle tested is OWASP's least agency: an agent gets only the access its task needs.",
-        "An MCP agent with four tools was deployed on AWS with one shared role, threat modelled with STRIDE, and hardened with four configuration changes.",
-        "The primary control is one identity per tool; content inspection and logging support it.",
-    ],
-    "evidence/index.md": [
-        "Three controls failed on the default build and passed after hardening: AC-6, SI-10 and AU-12.",
-        "Ten further tests are defined with pass conditions and reported as planned until run.",
-        "Every new result is recorded with a timestamp, expected outcome and SHA-256 hash.",
-    ],
-    "azure.md": [
-        "On Azure the over-provisioned account is usually one managed identity shared by every tool.",
-        "Several Azure behaviours change the controls: token caching, Conditional Access coverage, revocation and attribution.",
-        "Limitations and residual risk are stated plainly; Azure is a reference design until tested.",
-    ],
-}
+TAKEAWAYS: dict[str, list[str]] = {}
 
 FIGURES = {
     "attack": ("dg-attack.svg", "The same indirect prompt injection against the default and the hardened deployment."),
@@ -130,7 +114,10 @@ def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str
             f'<h1>{title}</h1><div class="meta">{pills}</div></div></div>'
             f'<div class="pbody"><article>{body}</article>'
             f'<aside class="toc"><div class="toch">On this page</div><ul>{toc}</ul></aside></div>')
-    desc = re.sub(r'<[^>]+>', '', TAKEAWAYS.get(src, [title])[0])
+    first = re.search(r'<p>(.*?)</p>', body, flags=re.S)
+    desc = TAKEAWAYS[src][0] if src in TAKEAWAYS else (first.group(1) if first else title)
+    desc = re.sub(r'<[^>]+>', '', desc)
+    desc = desc if len(desc) <= 200 else desc[:197].rsplit(' ', 1)[0] + '...'
     return page, title, desc
 
 

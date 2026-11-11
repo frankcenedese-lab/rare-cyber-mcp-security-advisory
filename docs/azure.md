@@ -56,16 +56,13 @@ Each tool runs in its own Function app with only its own identity attached.
 
 These differences change how a control is built or tested, not just which service provides it.
 
-| Topic | AWS | Azure | Consequence |
-| :--- | :--- | :--- | :--- |
-| **Separating tool identities** | Each Lambda function has one execution role | Any code in an app can request a token for any managed identity attached to it | One identity per tool only works if each tool runs in its own app or container |
-| **Scope of permissions** | IAM policies can name individual resources | Microsoft Graph application permissions are tenant wide by default | Narrow Graph access with Sites.Selected or Exchange RBAC for Applications, and remove the broad permission |
-| **Token lifetime** | Role sessions can be as short as 15 minutes | Managed identity tokens are cached for around 24 hours and can't be force refreshed | Short-lived credentials can't be enforced on the tool identity; the gateway becomes the short-lived control |
-| **Access conditions** | IAM condition keys work on any role | Conditional Access covers agent identities (preview) and single-tenant service principals, not managed identities or API keys | Don't rely on Conditional Access for the tool layer |
-| **Revocation** | Revoke the role's active sessions | Disabling an identity stops new tokens; issued tokens run to expiry, and role changes on a managed identity can take hours | Block the agent at API Management first |
-| **Attribution downstream** | The user's source identity stays on the role session and appears in CloudTrail | A managed identity call carries no user | The API Management log is the only record linking user, agent and tool |
-| **Where per-tool checks run** | In the MCP server, because API Gateway can't read the request body | In API Management, which can read the body | Azure can enforce at the gateway |
-| **Agent identity** | IAM role for the agent runtime | Entra Agent ID: agent identities created from a blueprint, each with a sponsor. In delegated calls the user is the token subject and the agent appears in `azp` and `xms_act_fct` | Check those claims at the gateway |
+| Topic | AWS | Azure, and what it changes |
+| :--- | :--- | :--- |
+| **Separating tool identities** | Each Lambda function has one execution role | Any code in an app can use any managed identity attached to it, so each tool needs its own app or container |
+| **Scope of permissions** | IAM policies can name individual resources | Microsoft Graph application permissions are tenant wide unless narrowed with Sites.Selected or Exchange RBAC for Applications, and the broad permission removed |
+| **Token lifetime and revocation** | Role sessions can be as short as 15 minutes, and active sessions can be revoked | Managed identity tokens are cached for around 24 hours and can't be force refreshed, so the API Management gateway is where an agent is cut off |
+| **Access conditions** | IAM condition keys work on any role | Conditional Access doesn't cover managed identities or API keys, so it can't protect the tool layer |
+| **Attribution downstream** | The user's source identity appears in CloudTrail on every call | A managed identity call carries no user, so the API Management log is the only record linking user, agent and tool |
 
 Agents built in Copilot Studio or Microsoft 365 Copilot follow a different model: connectors carry their own credentials, and no customer gateway is in the path by default. They are out of scope here.
 
@@ -102,9 +99,14 @@ All testing was performed in environments owned and controlled by the author. Ru
 
 | Version | Date | Changes |
 | :--- | :--- | :--- |
+| 2.1 | 2026-11-11 | Credited Zach Marcy for the original AWS lab. Removed repeated tables and page summaries, and shortened the Azure differences. |
 | 2.0 | 2026-11-11 | Condensed to four pages focused on what was built and tested. Anchored on OWASP least agency and NIST SP 800-53. Removed non-standard terms and the agent identity maturity model. Earlier pages are kept in the repository archive. |
 | 1.4 | 2026-11-11 | Azure material corrected against Microsoft's documentation: two layers of least privilege and the platform differences. |
 | 1.0 to 1.3 | 2026-11-10 | Initial report, threat model, test harness and critical review corrections. |
+
+## Acknowledgements
+
+Thanks to Zach Marcy, who developed the original AWS lab environment with the author.
 
 ## Sources
 

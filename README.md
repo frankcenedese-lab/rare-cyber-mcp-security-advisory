@@ -1,6 +1,8 @@
 # Securing AI Agents with Privileged Tool Access
 
-Least agency, tested in an AWS lab. Technical report (version 2.0) by Frank Cenedese, CISSP, CISA.
+Least agency, tested in an AWS lab. Technical report (version 2.1) by Frank Cenedese, CISSP, CISA.
+
+The original AWS lab was developed with Zach Marcy. The threat model, hardening analysis, test harness and Azure analysis in this report are the author's own.
 
 ---
 
@@ -17,7 +19,7 @@ The OWASP Top 10 for Agentic Applications (2026) sets out the principle of least
 | Section | Source |
 | :--- | :--- |
 | Abstract and key findings | [site home](https://frankcenedese-lab.github.io/rare-cyber-mcp-security-advisory/) |
-| 1. What I Built and How I Hardened It | [docs/lab.md](docs/lab.md) |
+| 1. Lab Design and Hardening | [docs/lab.md](docs/lab.md) |
 | 2. Results and Evidence | [docs/evidence/index.md](docs/evidence/index.md) |
 | 3. Applying It on Azure, and Limitations | [docs/azure.md](docs/azure.md) |
 
