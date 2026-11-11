@@ -1,12 +1,12 @@
 # Securing AI Agents with Privileged Tool Access
 
-A threat-modelled lab on AWS and Microsoft. Technical report (version 1.3) by Frank Cenedese, CISSP, CISA.
+A threat-modelled lab, tested on AWS, with an Azure reference design. Technical report (version 1.4) by Frank Cenedese, CISSP, CISA.
 
 ---
 
 ## Overview
 
-AI agents connected to business systems through the Model Context Protocol (MCP) commonly run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person. This repository contains a lab-based technical report on those risks: a STRIDE threat model, the TRIAD controls applied on AWS with Microsoft equivalents, configuration and policy changes before and after, an automated test harness, and the results to date, with limitations stated.
+AI agents connected to business systems through the Model Context Protocol (MCP) commonly run every tool under one shared credential, can be steered by content they read, and leave logs that can't attribute an action to a person. This repository contains a lab-based technical report on those risks: a STRIDE threat model, the TRIAD controls tested on AWS with an Azure reference design that sets out where Azure differs, configuration and policy changes before and after, an automated test harness, and the results to date, with limitations stated.
 
 ---
 
@@ -40,7 +40,7 @@ AI agents connected to business systems through the Model Context Protocol (MCP)
 │   ├── advisory/              # Executive brief and testing guide
 │   └── evidence/              # Evidence page, baseline results, harness runs
 ├── lab/                       # TRIAD test harness
-│   ├── triad_tests.py         # Runs TC-01 to TC-13 on AWS or Microsoft
+│   ├── triad_tests.py         # Runs TC-01 to TC-13 on AWS or Azure
 │   ├── tool_lock.py           # Tool definition hash lock (TC-06)
 │   ├── sod_check.py           # Separation of duties and ownership check (TC-11)
 │   ├── tools/ identity/ payloads/ queries/

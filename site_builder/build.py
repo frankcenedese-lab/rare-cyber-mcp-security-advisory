@@ -54,13 +54,13 @@ TAKEAWAYS = {
         "The lab is at level 2 of a five-level maturity model, with user attribution; levels 3 to 5 are designed with tests TC-08 to TC-13.",
     ],
     "configuration.md": [
-        "Six configuration changes produced the TRIAD results, each shown before and after on AWS and Microsoft.",
+        "Six configuration changes produced the TRIAD results, each shown before and after on AWS (tested) and Azure (reference design).",
         "Eight governance policies changed so the configuration can't quietly drift back.",
         "Every change traces to a threat, a test and an ISO/IEC 27001 or 42001 control.",
     ],
     "advisory/testing-guide.md": [
-        "Thirteen tests run on AWS and Microsoft, with the same pass conditions.",
-        "Each tool's role is enforced per call, with default deny: in APIM on Microsoft, in the MCP server on AWS.",
+        "Thirteen tests with the same pass conditions: run on AWS, defined for Azure.",
+        "Least privilege has two layers on both clouds: which tools an agent may call, and what each tool's own identity can reach.",
         "Every test is defined in the lab harness, which writes hashed, timestamped evidence.",
     ],
 }
@@ -68,7 +68,8 @@ TAKEAWAYS = {
 FIGURES = {
     "attack": ("dg-attack.svg", "The same indirect prompt injection against an unhardened and a TRIAD hardened deployment."),
     "stride": ("dg-stride.svg", "Lab architecture with each STRIDE threat placed where it crosses a trust boundary."),
-    "idflow": ("dg-idflow.svg", "Identity flow for one tool call: the token at each hop, its audience and claims, and the blocked passthrough."),
+    "idflow": ("dg-idflow.svg", "Identity flow for one tool call: the token at each hop, its audience and claims, and the blocked passthrough. Claim names follow RFC 8693; Entra identifies the agent in azp and xms_act_fct instead of act."),
+    "matrix": ("dg-matrix.svg", "Control equivalence: the tested AWS stack and the Azure reference design. On Azure, least privilege covers both the tool credential and caller authorization."),
     "decouple": ("dg-decouple.svg", "Identity flattening compared with decoupled, tool-scoped workload identities, using the lab's four tools."),
     "maturity": ("dg-maturity.svg", "Agent identity maturity model, with the lab's current level."),
 }
@@ -108,7 +109,7 @@ def fix_links(body: str, src: str) -> str:
 
 def figure(key: str) -> str:
     name, cap = FIGURES[key]
-    return f'<div class="figure">{svg(name, prefix=key[:2] + "-")}<div class="figcap">{cap}</div></div>'
+    return f'<div class="figure">{svg(name, prefix=key + "-")}<div class="figcap">{cap}</div></div>'
 
 
 def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str]:
@@ -129,10 +130,6 @@ def render_page(out: str, label: str, src: str, tag: str) -> tuple[str, str, str
     body = re.sub(r'^\s*<hr />', '', body)
 
     body = re.sub(r'<div class="figure-slot" data-figure="([a-z]+)"></div>', lambda m: figure(m.group(1)), body)
-    if src == "advisory/testing-guide.md":
-        body = re.sub(r'<pre><code[^>]*>AWS HARDENED STACK.*?</code></pre>',
-                      f'<div class="figure">{svg("dg-matrix.svg", "mx-")}<div class="figcap">Each TRIAD control has a direct equivalent on both platforms.</div></div>',
-                      body, flags=re.S)
     if src in TAKEAWAYS:
         items = "".join(f"<li>{x}</li>" for x in TAKEAWAYS[src])
         body = f'<div class="takeaways"><div class="t">Summary</div><ul>{items}</ul></div>' + body
@@ -167,7 +164,7 @@ def main() -> None:
 
     home = (HERE / "home.html").read_text().replace("{{ATTACK}}", svg("dg-attack.svg", "hm-"))
     write("index.html", home, "Securing AI Agents with Privileged Tool Access · Technical Report",
-          "A threat-modelled lab on AWS and Microsoft: STRIDE analysis, configuration and policy changes, test cases and evidence for AI agents using MCP.")
+          "A threat-modelled lab, tested on AWS with an Azure reference design: STRIDE analysis, configuration and policy changes, test cases and evidence for AI agents using MCP.")
     for out, label, src, tag in PAGES:
         body, title, desc = render_page(out, label, src, tag)
         write(out, body, f"{label} · {SITE}", desc)

@@ -11,7 +11,7 @@
 
 Every control in this report ultimately asks one question: **who is allowed to do this, right now, on whose behalf?** Prompt injection steers an agent; identity decides how much damage a steered agent can do. Per-tool roles (level 2) answer only part of that question. They say which tool an agent may call. They don't say for whom, with what limits, for how long, or who is accountable for the agent itself.
 
-This section separates the identities involved, defines a maturity model for constraining them, and maps each level to controls and tests on AWS and Microsoft.
+This section separates the identities involved, defines a maturity model for constraining them, and maps each level to controls and tests on AWS (tested) and Azure (reference design).
 
 ---
 
@@ -27,9 +27,12 @@ Default MCP deployments often run every tool under one highly privileged service
 
 These are the minimum controls for any agent allowed to reach production systems.
 
-**A. Tool-scoped workload identities.** Each tool function runs under its own identity with one permission set: an IAM role per tool on AWS, a managed identity or app registration per tool on Microsoft. A read-only tool must have no authorization path to write or delete. Conflicting duties, such as posting and approving, must never share an identity.
+**A. Tool-scoped workload identities.** Each tool function runs under its own identity with one permission set: an IAM role per tool on AWS, a user-assigned managed identity per tool on Azure (an app registration only where a managed identity can't be used). On Azure this also means scoping Microsoft Graph access: Graph application permissions are tenant wide unless narrowed with Sites.Selected or Exchange RBAC for Applications, and the broad permission must then be removed. A read-only tool must have no authorization path to write or delete. Conflicting duties, such as posting and approving, must never share an identity.
 
-**B. Ephemeral credential brokering.** No static API keys or long-lived tokens in tool configuration. Credentials are issued at runtime through workload identity federation or managed identities, with access tokens limited to **60 minutes**, and **15 minutes** for high-risk tools. Fifteen minutes is the shortest role session AWS STS allows. On Microsoft, Entra access tokens default to a longer, variable lifetime, so meeting this standard needs a token lifetime policy or continuous access evaluation.
+**B. Ephemeral credential brokering.** No static API keys or long-lived tokens in tool configuration. Credentials are issued at runtime through workload identity federation or managed identities, with access tokens limited to **60 minutes**, and **15 minutes** for high-risk tools. Fifteen minutes is the shortest role session AWS STS allows.
+
+!!! warning "Azure exception"
+    This lifetime standard can't be met with Azure managed identities. Microsoft states that the back-end services for managed identities cache tokens per resource for around 24 hours, that a forced refresh isn't possible, and that changes to a managed identity's roles can take hours to take effect. Continuous access evaluation for workloads doesn't support managed identities either. On Azure the short-lived control moves to the gateway: APIM validates every call, and blocking an agent at APIM takes effect immediately, whatever tokens the tool's managed identity still holds. Record this as a compensating control.
 
 **C. User-to-agent delegation.** Human-initiated requests use delegation (OAuth on-behalf-of or token exchange), never token passthrough. The agent can't call any tool or reach any resource the initiating user isn't authorized for. Authorization keys on the user's immutable object ID (`oid` in Entra, principal ID in AWS); the UserPrincipalName is logged for readability but never used to decide access, because it can change.
 
@@ -42,7 +45,7 @@ These are the minimum controls for any agent allowed to reach production systems
 | Identity | What it is | What it must never do |
 | :--- | :--- | :--- |
 | **User** | The person whose request started the session | Gain rights through the agent that they don't hold directly |
-| **Agent** | The AI client acting for the user, with its own identity (an IAM role or an Entra Agent ID) | Act with standing rights broader than the current task needs |
+| **Agent** | The AI client acting for the user, with its own identity (an IAM role, or an Entra agent identity created from an agent identity blueprint) | Act with standing rights broader than the current task needs |
 | **MCP server** | A resource server that accepts tokens issued for it | Accept a token issued for another server, or forward the token it received |
 | **Downstream API** | The system of record (ERP, CRM) the tool finally changes | Receive a token that wasn't issued for it |
 
@@ -54,7 +57,11 @@ The MCP authorization specification makes the third row a requirement: MCP serve
 
 <div class="figure-slot" data-figure="idflow"></div>
 
-Each hop gets a new token, bound to the next audience. The agent's token names both the user (`sub`) and the agent (`act`), so the gateway can cap the agent at the user's rights. The MCP server never forwards that token; it obtains its own for the downstream API.
+Each hop gets a new token, bound to the next audience. The agent's token names both the user (`sub`) and the agent, so the gateway can cap the agent at the user's rights. The MCP server never forwards that token; it obtains its own for the downstream API.
+
+The figure uses the standard claim names from OAuth token exchange (RFC 8693), where the agent appears in an `act` claim. **Entra doesn't issue `act`.** In Entra's on-behalf-of flow for agents, the user is the subject (`sub` and `oid`), and the agent appears in `azp` and in Microsoft's own `xms_act_fct` claim. On Azure the gateway checks those claims instead.
+
+Entra also defines a third pattern, the **agent's user account**: a user-like identity that the agent operates as, for systems that only accept users. It holds standing rights the way a user account does, so it needs the same reviews, sponsorship and separation of duties as a privileged user. This report doesn't test it.
 
 ---
 
@@ -64,11 +71,13 @@ Each hop gets a new token, bound to the next audience. The agent's token names b
 | :--- | :--- | :--- |
 | **Gateway authentication** | Amazon API Gateway with IAM (SigV4) authorization | Azure API Management with `validate-azure-ad-token` |
 | **Per-tool enforcement** | In the MCP server or a proxy in front of it: API Gateway authorizers can't read the request body, where MCP carries the tool name | In the APIM policy, which reads the tool name from the request body |
-| **Agent identity** | IAM role for the agent runtime, with required owner tags | Entra Agent ID, with owner and sponsor |
-| **Tool identity** | One IAM execution role per Lambda function or container | App registration per tool: app roles for app-only calls, scopes for delegated calls |
-| **Delegated access** | `AssumeRoleWithWebIdentity` for federation, with the user carried as source identity or session tags | Entra on-behalf-of flow |
+| **Agent identity** | IAM role for the agent runtime, with required owner tags | Entra agent identity created from an agent identity blueprint (one blueprint per agent class), with a sponsor |
+| **Caller authorization** (which tools an agent may call) | Per-tool `required_role` checked in the MCP server | Per-tool app roles on the API, checked by APIM |
+| **Tool identity** (what each tool can reach) | One IAM execution role per Lambda function or container | One user-assigned managed identity per tool, with Azure RBAC at resource scope; Graph access narrowed with Sites.Selected or Exchange RBAC for Applications |
+| **Delegated access** | `AssumeRoleWithWebIdentity` for federation, with the user carried as source identity or session tags | Entra on-behalf-of flow; the agent appears in `azp` and `xms_act_fct`, not `act` |
+| **User attribution downstream** | Source identity stays on the role session and appears in CloudTrail | A managed identity call carries no user. The user is recorded only in the APIM log (C3), unless the tool uses on-behalf-of |
 | **Token audience** | Role permissions scoped to the specific API and resource ARNs; where an OAuth provider such as Amazon Cognito fronts the gateway, its token `aud` is validated | `aud` validated by APIM and the MCP server |
-| **Access conditions** | IAM condition keys (source network, MFA, session duration) | Conditional Access for agents and workload identities |
+| **Access conditions** | IAM condition keys (source network, MFA, session duration), available on every role | Conditional Access for agents (preview) and for workload identities (Workload Identities Premium). Neither covers managed identities, agents using API keys, or the token exchange step |
 | **Data boundary** | IAM resource-based policies and AWS KMS key policies | Purview sensitivity labels and DLP; Key Vault with customer-managed keys |
 
 ---
@@ -89,7 +98,7 @@ Each hop gets a new token, bound to the next audience. The agent's token names b
 
 ## Level 3: delegated and audience-bound
 
-**Delegation.** Level 2 already records the user for attribution. Level 3 goes further: the user's rights limit what the agent may do. With a standards-based identity provider, OAuth token exchange (RFC 8693) issues a token naming both parties, with an `act` claim for the agent. On Microsoft, the on-behalf-of flow issues a token that keeps the user's identity and roles, which the gateway checks. On AWS, the user travels as the role session's source identity, but source identity only records who the user is; a policy engine such as Amazon Verified Permissions must look up the user's entitlements and refuse calls beyond them. In every case the agent is refused any call the user couldn't make directly (TC-08).
+**Delegation.** Level 2 already records the user for attribution. Level 3 goes further: the user's rights limit what the agent may do. With a standards-based identity provider, OAuth token exchange (RFC 8693) issues a token naming both parties, with an `act` claim for the agent. On Microsoft, the on-behalf-of flow issues a token whose subject is the user, keeping the user's identity and roles for the gateway to check, with the agent identified in `azp` and `xms_act_fct` rather than `act`. On AWS, the user travels as the role session's source identity, but source identity only records who the user is; a policy engine such as Amazon Verified Permissions must look up the user's entitlements and refuse calls beyond them. In every case the agent is refused any call the user couldn't make directly (TC-08).
 
 **Audience binding.** The agent requests each token for one MCP server, using the `resource` parameter. The gateway and the MCP server reject any token whose audience isn't theirs (TC-09).
 
@@ -122,7 +131,7 @@ permit (
 
 **Separation of duties.** No agent may hold roles that together let it complete a sensitive process alone: posting and approving a journal entry, or changing vendor bank details and releasing a payment. Conflicting pairs are defined in a rule file and checked whenever role assignments change (TC-11).
 
-**Just-in-time elevation.** High-risk tools are not held standing. The agent requests elevation for one task, a person approves it, and a short-lived token is issued that expires when the task ends (TC-12). This is zero standing privilege, applied to agents.
+**Just-in-time elevation.** High-risk tools are not held standing. The agent requests elevation for one task, a person approves it, and a short-lived token is issued that expires when the task ends (TC-12). This is zero standing privilege, applied to agents. On Azure, time-bound elevation for a workload identity is not the same as Privileged Identity Management for people; plan to implement it with an approval workflow, and enforce the expiry at APIM, because removing a role from a managed identity doesn't end its access promptly. Verify the behaviour before relying on it.
 
 **Sender-constrained tokens.** Where the identity provider supports it, tokens are bound to the agent's key using DPoP (RFC 9449) or mutual TLS, so a stolen token can't be replayed from another machine.
 
@@ -137,7 +146,7 @@ permit (
 | Every agent has a named owner and sponsor | Required resource tags on agent roles | Agent ID sponsor and owner |
 | Periodic access review of agent roles | IAM Access Analyzer findings reviewed on a schedule | Entra ID Governance access reviews |
 | Orphaned agents detected and removed | Unused role reports | Agents with no sponsor or recent sign-in |
-| Revocation measured, not assumed | Revoke active sessions on the role | Disable the agent identity; continuous access evaluation where the resource supports it |
+| Revocation measured, not assumed | Revoke active sessions on the role | Block the agent at APIM (immediate), then disable the agent identity. Disabling stops new tokens; issued tokens run to expiry, and managed identity changes can take hours |
 | Unusual agent behaviour detected | GuardDuty and CloudTrail anomaly detection | Entra ID Protection for agents, Sentinel analytics |
 
 Revocation deserves a number. An access token stays valid until it expires unless the resource re-checks it, so "we disabled the agent" can still mean minutes of continued access. TC-13 measures that window.

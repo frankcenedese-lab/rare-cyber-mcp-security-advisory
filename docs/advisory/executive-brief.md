@@ -63,7 +63,7 @@ The TRIAD framework describes five outcomes, not products:
 | **Every agent has its own identity, every tool its own permission** | A lookup agent can't make payments, even if it's tricked into trying |
 | **Tool definitions can't change silently** | What was approved is what runs |
 | **Every action is attributable** | Each tool call is logged with the user, the agent and what it did |
-| **The same standard applies on every platform** | AWS, Microsoft or both: one policy, one set of tests, one evidence standard |
+| **The same standard applies on every platform** | AWS, Azure or both: one policy, one set of tests, one evidence standard. On Azure, least privilege must cover both which tools an agent may call and what each tool's own managed identity can reach |
 
 ---
 

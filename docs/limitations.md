@@ -8,7 +8,7 @@
 
 ## Scope
 
-This report covers a single AI agent connected to business tools through the Model Context Protocol (MCP), behind an API gateway, in a lab environment built for this work. Controls were implemented and tested on AWS. Microsoft equivalents are documented for every control; Microsoft results are reported only for tests that have been run in a Microsoft tenant.
+This report covers a single AI agent connected to business tools through the Model Context Protocol (MCP), behind an API gateway, in a lab environment built for this work. Controls were implemented and tested on AWS. For Azure, the report gives a reference design and the platform differences that change it; no Azure test has been run yet, and Azure results will be reported only once tests are run in an Azure tenant. Agents built in Copilot Studio or Microsoft 365 Copilot follow a different model (connectors with their own credentials, and no customer gateway in the path by default) and are out of scope.
 
 ## Authorization
 
@@ -26,7 +26,8 @@ All testing described in this report was performed in environments owned and con
 | **Framework mappings** | Control mappings to NIST SP 800-53, NIST AI RMF and ISO standards are the author's analysis | They support, but don't replace, a formal compliance assessment |
 | **Identity maturity** | The lab is at level 2 with user attribution. Levels 3 to 5 of the agent identity maturity model are designed and specified, not yet implemented | Identity controls beyond per-tool roles are reported as design, not as tested results |
 | **Detection** | Only TC-05 checks that an alert is raised. Whether a security operations team would detect an injection or a confused deputy in practice isn't tested | Detection and response capability is assumed, not demonstrated |
-| **Platform features** | Some Microsoft features referenced (for example, the Sentinel Copilot data connector) were in preview at the time of writing | Availability and behaviour may change; the Testing Guide notes preview status |
+| **Azure validation** | The Azure column is a reference design. It was corrected in version 1.4, after review against Microsoft's documentation, to include the tool credential layer | Azure statements are design and documented platform behaviour, not tested results |
+| **Platform features** | Several Microsoft features referenced are in preview: Conditional Access and ID Protection for agents, and the Sentinel Copilot data connector. Agent 365 licensing enforcement had not started at the time of writing | Availability, behaviour and licensing may change; the Testing Guide notes preview status |
 
 ## Residual risk
 
@@ -34,7 +35,7 @@ Hardening reduces risk; it doesn't remove it. After the TRIAD controls, the lab 
 
 - **Novel injection:** payloads that content inspection doesn't recognize. Per-tool identity and parameter limits cap the damage a steered agent can do, which is why identity, not detection, is the primary control.
 - **Misuse within granted rights:** an agent acting within its role and limits can still take a wrong action. Separation of duties and human approval for high-risk tools reduce this.
-- **Revocation lag:** a disabled agent can keep working until its tokens expire. TC-13 measures this window.
+- **Revocation lag:** a disabled agent can keep working until its tokens expire. TC-13 measures this window. On Azure the window can be much longer for managed identities, whose tokens can be cached for around 24 hours, so the gateway block is the primary kill switch.
 - **Output leakage (I3):** data carried out in the agent's own responses is identified but not yet controlled or tested.
 
 In an organization, residual risk should be accepted formally by a named risk owner, usually the business owner of the process the agent supports, and reviewed when tests or the threat model change.
@@ -68,6 +69,7 @@ For Canadian organizations, this aligns logging with PIPEDA's limits on collecti
 
 | Version | Date | Changes |
 | :--- | :--- | :--- |
+| 1.4 | 2026-11-11 | Azure alignment review. The Microsoft column now models the same problem as the AWS lab: least privilege is split into caller authorization and the tool credential, and the Azure form of the over-provisioned account (one managed identity shared by every tool, plus tenant-wide Graph permissions) is shown before and after. Added a table of platform differences (token caching, Conditional Access coverage, revocation, Graph scope, downstream attribution) and a review of vendor claims against documented behaviour. Corrected the Entra delegation claims (`azp` and `xms_act_fct`, not `act`), Conditional Access licensing and preview status, the automatic Agent ID statement, and the data protection mapping. Added agent identity blueprints and the agent user account pattern. Azure methods for TC-01, TC-03, TC-12 and TC-13 rewritten. The report now states plainly that AWS is tested and Azure is a reference design. |
 | 1.3 | 2026-11-10 | Critical review corrections. Erratum on the hardened assessment's scope; repository checks reported as VERIFIED rather than lab passes. Clarified that the lab records the user (attribution) but doesn't yet authorize by the user's rights (level 3). Corrected AWS per-tool enforcement (in the MCP server, since API Gateway authorizers can't read the request body), the APIM reference policy (default deny for unlisted tools), the source identity condition, the 15-minute token minimum, the AWS audience and throttling rows, and the Bedrock document-injection caveat. Added threat I3 (output leakage), residual risk, logging and privacy, and operational considerations. Harness: allowed paths now require a successful response within an MCP session. Consistent four-tool description, Canadian spelling and neutral voice. |
 | 1.2 | 2026-11-10 | Added the Identity Architecture section: identity flattening vs decoupled identity, mandatory identity standards (tool-scoped identities, ephemeral credentials with 60 and 15 minute token limits, delegation, audience binding), a multi-cloud implementation mapping, four identities, token flow with audience binding and no passthrough, a five-level agent identity maturity model, and tests TC-09 to TC-13. Threat model extended to fifteen threats. Separation of duties check (TC-11) added to the harness and CI. |
 | 1.1 | 2026-11-10 | Restructured as a technical report. Added the STRIDE threat model (ten threats, five trust boundaries), configuration and policy changes before and after, the automated test harness, tests TC-04 to TC-08, the evidence standard, and this section. Executive brief moved to an appendix. |

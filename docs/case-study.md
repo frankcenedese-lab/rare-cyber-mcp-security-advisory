@@ -1,6 +1,6 @@
 # Method and Environment: Building and Hardening the AI Agent Lab
 
-**Platforms:** AWS lab build · Microsoft control mapping  
+**Platforms:** AWS lab (tested) · Azure reference design (validation in progress)  
 **Frameworks:** NIST SP 800-53 · NIST AI RMF · ISO/IEC 42001 · OWASP  
 **Author:** Frank Cenedese, CISSP, CISA
 
@@ -63,7 +63,7 @@ TRIAD is an acronym of its five elements, not a reference to three controls. The
 - **R**igid identity decoupling: one scoped identity per tool
 - **I**mmutable governance: tool definitions version controlled and hashed, so they can't drift
 - **A**udit telemetry: every tool call recorded with the user, the agent and the arguments
-- **D**ual-ecosystem enforcement: the same policy and the same tests on AWS and Microsoft
+- **D**ual-ecosystem enforcement: the same policy and the same tests on every platform. AWS is tested; Azure is the next validation target
 
 ---
 
@@ -85,6 +85,15 @@ The assessment output is on the [Results](evidence/index.md) page, threats not c
 
 ---
 
-## 6. Mapping to Microsoft
+## 6. Applying the design on Azure
 
-Many organizations will run agents on Microsoft platforms such as Copilot Studio, Microsoft Foundry and Microsoft 365 Copilot. Every control is mapped to its Microsoft equivalent: Entra Agent ID for agent identity, Azure API Management for per-tool enforcement, Prompt Shields for injection defence, and Sentinel and Purview for audit. The [Testing Guide](advisory/testing-guide.md) shows how each test runs on both platforms, with a reference gateway policy, a detection query and the validation test plan. Microsoft results will be added as the tests are run in a tenant.
+The results above are from AWS. The same problem exists on Azure, but in a different form, and an equivalent that only maps service names misses it.
+
+On Azure, the over-provisioned account is usually **one managed identity shared by every tool** in the MCP server, holding broad Azure roles and often a tenant-wide Microsoft Graph permission. Least privilege has to be applied at two layers:
+
+- **Caller authorization:** which tools an agent may call. API Management checks a per-tool app role in the agent's token.
+- **Tool credential:** what each tool can reach. Each tool runs with its own user-assigned managed identity, scoped to one resource.
+
+Several Azure behaviours change how the controls work: managed identity tokens can be cached for around 24 hours, Conditional Access doesn't cover managed identities, and a managed identity call carries no user downstream. The [Testing Guide](advisory/testing-guide.md) sets out the Azure reference design, the platform differences and the Azure method for each test. No Azure test has been run yet; results will be added once they are.
+
+Agents built in Copilot Studio or Microsoft 365 Copilot use connectors with their own credentials and don't pass through a customer gateway by default. They need a separate analysis and are out of scope for this report.

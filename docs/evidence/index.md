@@ -6,7 +6,7 @@ Statuses: **PASS** means the test was run against the deployed lab. **VERIFIED**
 
 ## Test run log
 
-| Test | Threat | AWS | Microsoft | Notes |
+| Test | Threat | AWS | Azure | Notes |
 | :--- | :--- | :--- | :--- | :--- |
 | TC-01 Out-of-scope tool call | E1 | PASS | PLANNED | v1.0 baseline (2026-11-10 10:00 UTC) and hardened (10:30 UTC) assessments, AWS lab |
 | TC-02 Indirect prompt injection | T1 | PASS | PLANNED | v1.0 assessments, AWS lab |

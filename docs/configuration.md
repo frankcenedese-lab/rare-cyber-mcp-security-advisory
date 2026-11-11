@@ -1,7 +1,7 @@
 # Configuration and Policy Changes: Before and After
 
 **Scope:** Every configuration and governance policy change behind the TRIAD results  
-**Environments:** AWS lab · Microsoft equivalents  
+**Environments:** AWS lab (tested) · Azure reference design (validation in progress)  
 **Traceability:** Each change maps to a threat, a test and a policy  
 **Last reviewed:** November 2026
 
@@ -11,8 +11,15 @@
 
 Hardening isn't one setting. Each TRIAD result came from a specific configuration change, and each configuration change only lasts if a policy requires it. This page shows both layers:
 
-1. **Technical configuration**, before and after, on AWS and Microsoft.
+1. **Technical configuration**, before and after, on AWS (tested) and Azure (reference design).
 2. **Governance policies** that had to change so the configuration stays that way.
+
+Least privilege has two layers, and the lab's original finding sits in the second:
+
+* **Caller authorization:** which tools an agent may call.
+* **Tool credential:** what each tool's own identity can reach once it runs. The baseline's over-provisioned account lives here.
+
+C1 covers the tool credential on both platforms; C2 covers caller authorization.
 
 Examples use placeholder account IDs, names and GUIDs. They're reference patterns from the lab; validate them in a non-production environment before use.
 
@@ -22,7 +29,7 @@ Examples use placeholder account IDs, names and GUIDs. They're reference pattern
 
 | # | Change | Threats | Test | AWS | Microsoft |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| C1 | Split the shared role into one role per tool | E1, I1 | TC-01, TC-07 | IAM roles | Entra app roles |
+| C1 | Split the shared credential into one identity per tool | E1, I1 | TC-01, TC-07 | IAM execution role per tool | User-assigned managed identity per tool, plus per-tool app roles |
 | C2 | Enforce identity at the gateway and the role per tool | E1, E2, S2 | TC-01, TC-08 | API Gateway IAM auth + per-tool check in the MCP server | APIM `validate-azure-ad-token` per tool, default deny |
 | C3 | Record the user's identity in every tool call (attribution) | R1 | TC-03 | STS source identity | Logged user claims |
 | C4 | Inspect untrusted content before the agent acts | T1 | TC-02 | Bedrock Guardrails | Prompt Shields |
@@ -74,7 +81,53 @@ Examples use placeholder account IDs, names and GUIDs. They're reference pattern
 </div>
 </div>
 
-**Microsoft: Entra app roles**
+**Azure: tool credential (managed identity)**
+
+<div class="ba" markdown="1">
+<div class="before" markdown="1">
+
+**Before:** one managed identity for every tool
+
+```bash
+# The MCP server's single identity, used by all four tools
+az role assignment create --assignee "$MCP_MI" \
+  --role "Contributor" --scope "$FINANCE_RG_ID"
+az role assignment create --assignee "$MCP_MI" \
+  --role "Storage Blob Data Contributor" --scope "$STORAGE_ACCOUNT_ID"
+# Plus a tenant-wide Microsoft Graph application permission:
+# Sites.ReadWrite.All
+```
+
+The Azure form of the over-provisioned MCP account. The Graph permission reaches every SharePoint site in the tenant.
+
+</div>
+<div class="after" markdown="1">
+
+**After:** one identity per tool, scoped to one resource
+
+```bash
+az identity create -g rg-mcp -n mi-tool-customer-lookup
+az role assignment create --assignee "$MI_LOOKUP" \
+  --role "Storage Table Data Reader" \
+  --scope "$STORAGE_ACCOUNT_ID/tableServices/default/tables/customers"
+
+az identity create -g rg-mcp -n mi-tool-post-journal
+az role assignment create --assignee "$MI_POST" \
+  --role "Storage Queue Data Message Sender" \
+  --scope "$STORAGE_ACCOUNT_ID/queueServices/default/queues/journal"
+# Graph: Sites.Selected granted on one site;
+# Sites.ReadWrite.All removed
+```
+
+Each tool runs in its own Function app with only its own identity attached.
+
+</div>
+</div>
+
+!!! note "Where Azure differs"
+    Any code in an app can request a token for any managed identity attached to that app. Attaching four identities to one Function app looks separated but isn't, so each tool needs its own app (or container), the way each tool on AWS has its own Lambda execution role. Graph application permissions are tenant wide unless narrowed with Sites.Selected or Exchange RBAC for Applications, and the broad permission has to be removed for the narrowing to matter.
+
+**Azure: caller authorization (Entra app roles)**
 
 <div class="ba" markdown="1">
 <div class="before" markdown="1">
@@ -106,7 +159,7 @@ Any agent with access can call any tool.
 ]
 ```
 
-Each agent's Agent ID is granted only the roles its job needs.
+Each agent identity is granted only the roles its job needs. This decides which tools the agent may call; it doesn't limit what a tool's own identity can reach, which is why both blocks are needed.
 
 </div>
 </div>
@@ -204,7 +257,7 @@ Logs show the role, never the person behind it.
 </trace>
 ```
 
-The source identity is set to the user's immutable ID from the identity provider, never an email address or UPN, which can change. Both platforms record the UPN for readability only. This change provides attribution; refusing calls beyond the user's own rights is level 3 delegation (TC-08).
+The source identity is set to the user's immutable ID from the identity provider, never an email address or UPN, which can change. Both platforms record the UPN for readability only. On Azure this APIM record is the only place the user appears: when the tool then calls a downstream service with its managed identity, that call carries no user. On AWS the source identity stays on the role session and appears in CloudTrail. This change provides attribution; refusing calls beyond the user's own rights is level 3 delegation (TC-08).
 
 </div>
 </div>

@@ -1,6 +1,6 @@
 # TRIAD Lab Test Harness
 
-Repeatable tests for the thirteen TRIAD test cases, on AWS or Microsoft. Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
+Repeatable tests for the thirteen TRIAD test cases, on AWS or Azure. Each run writes one evidence file to `docs/evidence/runs/`, recording what was attempted, what was expected, what was observed, and a SHA-256 hash of the observation.
 
 > Only run these tests against environments you own or are authorized to test.
 
@@ -16,7 +16,7 @@ cp lab/config.example.env lab/.env   # fill in your lab gateway, tools and test 
 ## Run
 
 ```bash
-python lab/triad_tests.py --platform azure            # all tests on Microsoft
+python lab/triad_tests.py --platform azure            # all tests on Azure
 python lab/triad_tests.py --platform aws              # all tests on AWS
 python lab/triad_tests.py --platform aws --only TC-01 TC-07
 ```
