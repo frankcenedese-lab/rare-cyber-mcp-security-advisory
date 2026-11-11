@@ -44,6 +44,7 @@ TAKEAWAYS: dict[str, list[str]] = {}
 FIGURES = {
     "attack": ("dg-attack.svg", "The same indirect prompt injection against the default and the hardened deployment."),
     "stride": ("dg-stride.svg", "Lab architecture with each STRIDE threat placed where it crosses a trust boundary."),
+    "azure": ("dg-azure.svg", "Azure reference design (not yet tested): one managed identity shared by every tool, compared with one app and one managed identity per tool behind API Management."),
     "decouple": ("dg-decouple.svg", "One shared credential compared with one scoped identity per tool, using the lab's four tools."),
 }
 

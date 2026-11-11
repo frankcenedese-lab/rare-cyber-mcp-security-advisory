@@ -1,6 +1,6 @@
 # Securing AI Agents with Privileged Tool Access
 
-Least agency, tested in an AWS lab. Technical report (version 2.1) by Frank Cenedese, CISSP, CISA.
+Least agency, tested in an AWS lab. Technical report (version 2.2) by Frank Cenedese, CISSP, CISA.
 
 The original AWS lab was developed with Zach Marcy. The threat model, hardening analysis, test harness and Azure analysis in this report are the author's own.
 

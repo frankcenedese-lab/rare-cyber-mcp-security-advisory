@@ -1,0 +1,90 @@
+<svg class="dg" viewBox="0 0 1040 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Azure reference design: one shared managed identity compared with one managed identity per tool">
+<defs>
+  <marker id="dr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#dc2626"/></marker>
+  <marker id="dg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#059669"/></marker>
+  <marker id="dk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#64748b"/></marker>
+</defs>
+
+<!-- PANEL A: Azure default -->
+<rect class="panel" x="10" y="10" width="1020" height="260" rx="14"/>
+<circle cx="34" cy="38" r="5" fill="#dc2626"/><text class="hd" x="46" y="42">AZURE DEFAULT · ONE SHARED MANAGED IDENTITY</text>
+
+<rect class="box" x="30" y="114" width="150" height="56" rx="9"/>
+<text class="t1" x="105" y="138" text-anchor="middle">User + agent</text><text class="t2" x="105" y="155" text-anchor="middle">any request</text>
+
+<rect class="box bad" x="240" y="100" width="300" height="84" rx="9"/>
+<text class="t1" x="390" y="128" text-anchor="middle">Function app · MCP server</text>
+<text class="t2 r" x="390" y="147" text-anchor="middle">one managed identity · every tool</text>
+<text class="t2" x="390" y="165" text-anchor="middle">Contributor + Graph Sites.ReadWrite.All</text>
+
+<rect class="box" x="700" y="64" width="210" height="34" rx="7"/><text class="t1" x="805" y="86" text-anchor="middle">Customer table</text>
+<rect class="box" x="700" y="108" width="210" height="34" rx="7"/><text class="t1" x="805" y="130" text-anchor="middle">Journal queue</text>
+<rect class="box" x="700" y="152" width="210" height="34" rx="7"/><text class="t1" x="805" y="174" text-anchor="middle">Export storage</text>
+<rect class="box bad" x="700" y="196" width="210" height="34" rx="7"/><text class="t1" x="805" y="218" text-anchor="middle">Every SharePoint site</text>
+
+<path class="fl kk" d="M180 142 H236" marker-end="url(#dk)"/>
+<path class="fl red" d="M540 120 C 620 120, 630 81, 696 81" marker-end="url(#dr)"/>
+<path class="fl red" d="M540 134 C 620 134, 630 125, 696 125" marker-end="url(#dr)"/>
+<path class="fl red" d="M540 150 C 620 150, 630 169, 696 169" marker-end="url(#dr)"/>
+<path class="fl red" d="M540 164 C 620 164, 630 213, 696 213" marker-end="url(#dr)"/>
+<text class="sl r" x="618" y="70" text-anchor="middle">read · write · delete</text>
+<text class="t2" x="928" y="140">A tricked agent</text>
+<text class="t2" x="928" y="155">reaches all four,</text>
+<text class="t2" x="928" y="170">tenant wide</text>
+
+<!-- PANEL B: Azure hardened -->
+<rect class="panel" x="10" y="290" width="1020" height="420" rx="14"/>
+<circle cx="34" cy="318" r="5" fill="#059669"/><text class="hd" x="46" y="322">AZURE HARDENED · ONE MANAGED IDENTITY PER TOOL</text>
+
+<rect class="box" x="30" y="464" width="150" height="56" rx="9"/>
+<text class="t1" x="105" y="488" text-anchor="middle">User + agent</text><text class="t2" x="105" y="505" text-anchor="middle">Entra token</text>
+
+<rect class="box good" x="200" y="448" width="180" height="88" rx="9"/>
+<text class="t1" x="290" y="474" text-anchor="middle">API Management</text>
+<text class="t2" x="290" y="492" text-anchor="middle">checks app role per tool</text>
+<text class="t2" x="290" y="508" text-anchor="middle">default deny</text>
+<text class="t2" x="290" y="524" text-anchor="middle">cut-off point</text>
+<path class="fl kk" d="M180 492 H196" marker-end="url(#dk)"/>
+
+<text class="zl" x="430" y="360">APP ROLE IN THE TOKEN</text>
+<text class="zl" x="640" y="360">OWN APP + OWN IDENTITY</text>
+<text class="zl" x="850" y="360">ONE AZURE RBAC ROLE</text>
+
+<g>
+  <path class="fl green" d="M380 470 C 405 470, 405 390, 426 390" marker-end="url(#dg)"/>
+  <rect class="chip" x="430" y="376" width="180" height="28" rx="6"/><text class="t3" x="442" y="394">MCPTool.CustomerRead</text>
+  <path class="fl green" d="M610 390 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="374" width="170" height="32" rx="7"/><text class="t1" x="725" y="395" text-anchor="middle">func-customer-lookup</text>
+  <path class="fl green" d="M810 390 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="374" width="160" height="32" rx="7"/><text class="t2" x="930" y="394" text-anchor="middle">customers table · read</text>
+</g>
+<g>
+  <path class="fl green" d="M380 485 C 405 485, 405 450, 426 450" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="436" width="180" height="28" rx="6"/><text class="t3" x="442" y="454">MCPTool.FinancialWrite</text>
+  <path class="fl green" d="M610 450 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="434" width="170" height="32" rx="7"/><text class="t1" x="725" y="455" text-anchor="middle">func-post-journal</text>
+  <path class="fl green" d="M810 450 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="434" width="160" height="32" rx="7"/><text class="t2" x="930" y="454" text-anchor="middle">journal queue · send</text>
+</g>
+<g>
+  <path class="fl green" d="M380 500 C 405 500, 405 510, 426 510" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="496" width="180" height="28" rx="6"/><text class="t3" x="442" y="514">MCPTool.FinancialApprove</text>
+  <path class="fl green" d="M610 510 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="494" width="170" height="32" rx="7"/><text class="t1" x="725" y="515" text-anchor="middle">func-approve-journal</text>
+  <path class="fl green" d="M810 510 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="494" width="160" height="32" rx="7"/><text class="t2" x="930" y="514" text-anchor="middle">approvals table · write</text>
+</g>
+<g>
+  <path class="fl green" d="M380 515 C 405 515, 405 570, 426 570" marker-end="url(#dg)"/>
+  <rect class="chip good" x="430" y="556" width="180" height="28" rx="6"/><text class="t3" x="442" y="574">MCPTool.ExportWrite</text>
+  <path class="fl green" d="M610 570 H636" marker-end="url(#dg)"/>
+  <rect class="box" x="640" y="554" width="170" height="32" rx="7"/><text class="t1" x="725" y="575" text-anchor="middle">func-export-records</text>
+  <path class="fl green" d="M810 570 H846" marker-end="url(#dg)"/>
+  <rect class="box" x="850" y="554" width="160" height="32" rx="7"/><text class="t2" x="930" y="574" text-anchor="middle">export container · write</text>
+</g>
+
+<path class="sod" d="M1012 438 h8 v84 h-8"/>
+<text class="sl" x="430" y="622">Separation of duties: posting and approving run as separate apps and identities,</text><text class="sl" x="430" y="638">and no agent may hold both app roles (TC-11).</text>
+<text class="lg" x="30" y="664">Graph access narrowed to one site with Sites.Selected; Sites.ReadWrite.All removed.</text>
+<text class="lg" x="30" y="684">Managed identity tokens can be cached for around 24 hours, so an agent is cut off at API Management.</text>
+</svg>

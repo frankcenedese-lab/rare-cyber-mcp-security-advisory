@@ -17,6 +17,8 @@ Least privilege for an agent has two layers on any cloud:
 
 The lab's finding sits in the second layer. On AWS the over-provisioned account was one IAM role shared by every tool. **On Azure it is usually one managed identity shared by every tool**, holding broad roles and often a tenant-wide Microsoft Graph permission. Checking only which tools an agent may call leaves that account in place.
 
+<div class="figure-slot" data-figure="azure"></div>
+
 <div class="ba" markdown="1">
 <div class="before" markdown="1">
 
@@ -99,6 +101,7 @@ All testing was performed in environments owned and controlled by the author. Ru
 
 | Version | Date | Changes |
 | :--- | :--- | :--- |
+| 2.2 | 2026-11-11 | Added the Azure reference design diagram. |
 | 2.1 | 2026-11-11 | Credited Zach Marcy for the original AWS lab. Removed repeated tables and page summaries, and shortened the Azure differences. |
 | 2.0 | 2026-11-11 | Condensed to four pages focused on what was built and tested. Anchored on OWASP least agency and NIST SP 800-53. Removed non-standard terms and the agent identity maturity model. Earlier pages are kept in the repository archive. |
 | 1.4 | 2026-11-11 | Azure material corrected against Microsoft's documentation: two layers of least privilege and the platform differences. |
